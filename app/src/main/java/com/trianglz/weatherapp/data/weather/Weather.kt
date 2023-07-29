@@ -24,5 +24,70 @@ class Weather(
     @field:SerializedName("sunset")
     val sunset: Long
 ) {
+    companion object{
+        fun getDummyData(): List<Weather> =
+            listOf(
+                Weather(
+                    cloudPercentage = 15,
+                    currentTemperature = 30,
+                    feelsLike = 55,
+                    humidityPercentage = 93,
+                    lowTemperature = 10,
+                    highTemperature = 300,
+                    windSpeed = 13.2,
+                    windDegree = 210,
+                    sunrise = 562165115163,
+                    sunset = 315656565656
+                ),
+                Weather(
+                    cloudPercentage = 15,
+                    currentTemperature = 30,
+                    feelsLike = 55,
+                    humidityPercentage = 93,
+                    lowTemperature = 10,
+                    highTemperature = 300,
+                    windSpeed = 13.2,
+                    windDegree = 210,
+                    sunrise = 512165165163,
+                    sunset = 315656565656
+                ),
+                Weather(
+                    cloudPercentage = 15,
+                    currentTemperature = 30,
+                    feelsLike = 55,
+                    humidityPercentage = 93,
+                    lowTemperature = 10,
+                    highTemperature = 300,
+                    windSpeed = 13.2,
+                    windDegree = 210,
+                    sunrise = 563165165163,
+                    sunset = 315656565656
+                ),
+                Weather(
+                    cloudPercentage = 15,
+                    currentTemperature = 30,
+                    feelsLike = 55,
+                    humidityPercentage = 93,
+                    lowTemperature = 10,
+                    highTemperature = 300,
+                    windSpeed = 13.2,
+                    windDegree = 210,
+                    sunrise = 162165165163,
+                    sunset = 315656565656
+                ),
+                Weather(
+                    cloudPercentage = 15,
+                    currentTemperature = 30,
+                    feelsLike = 55,
+                    humidityPercentage = 93,
+                    lowTemperature = 10,
+                    highTemperature = 300,
+                    windSpeed = 13.2,
+                    windDegree = 210,
+                    sunrise = 562165165166,
+                    sunset = 315656565656
+                ),
+            )
+    }
 
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.R
 import com.trianglz.weatherapp.data.weather.Weather
 import com.trianglz.weatherapp.ui.theme.WeatherAppTheme
-import com.trianglz.weatherapp.ui.theme.darkPurpleIndigoBrush
+import com.trianglz.weatherapp.ui.theme.BackgroundGradient
 
 @Composable
 fun RectangleShapePreview() {
@@ -60,7 +60,7 @@ fun WeatherCard(
             )
             Text(
                 text = "$currentTemperature°",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground),
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(20.dp)
@@ -76,7 +76,7 @@ fun WeatherCard(
                 )
                 Text(
                     text = location,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground)
                 )
             }
 
@@ -94,7 +94,7 @@ fun WeatherCard(
                     .padding(vertical = 20.dp, horizontal = 24.dp)
                     .align(Alignment.BottomEnd),
                 text = description,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onBackground),
             )
         }
     }
@@ -194,7 +194,7 @@ fun WeatherListPreview() {
         )
         LazyColumn(
             modifier = Modifier.background(
-                brush = darkPurpleIndigoBrush
+                brush = BackgroundGradient
             ),
             contentPadding = PaddingValues(
                 vertical = 10.dp,

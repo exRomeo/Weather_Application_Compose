@@ -1,6 +1,7 @@
 package com.trianglz.weatherapp.ui.home
 
 import androidx.compose.foundation.layout.Arrangement.spacedBy
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -17,21 +18,35 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.trianglz.weatherapp.data.country.Country
-import com.trianglz.weatherapp.data.weather.Weather
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.trianglz.weatherapp.BuildConfig
+import com.trianglz.weatherapp.core.apiservice.apininja.ApiNinjaClient
+import com.trianglz.weatherapp.core.apiservice.restcountries.RestCountriesClient
+import com.trianglz.weatherapp.data.datasource.RemoteDataSource
+import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.data.repository.Repository
 import com.trianglz.weatherapp.ui.components.WeatherCard
 import com.trianglz.weatherapp.ui.components.WeatherSearchBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
+    val viewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(
+            Repository(
+                RemoteDataSource(
+                    ninjaApi = ApiNinjaClient().ninjaApi,
+                    apiKey = BuildConfig.APIKEY,
+                    restCountriesAPI = RestCountriesClient().restCountriesAPI
+                )
+            )
+        )
+    )
     Scaffold(modifier = modifier, containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
@@ -59,22 +74,25 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             )
         }
     ) {
+        val text by viewModel.searchTextState.collectAsState()
+        val results by viewModel.searchResult.collectAsState()
+        val weatherData by viewModel.weatherData.collectAsState()
         Column(
             modifier = Modifier
                 .padding(it)
-
         ) {
-            var text by remember { mutableStateOf("") }
-            WeatherSearchBar(
-                modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
-                placeHolder = "Search for a Country",
-                text = text,
-                onTextChanged = { newValue -> text = newValue },
-                noResultPlaceHolder = "No Results",
-                onResultsReceived = { Country.getDummyCountries() },
-                onResultClicked = {},
-            )
-            WeatherDataList()
+            Box{
+                WeatherDataList(modifier = Modifier.padding(top = 48.dp),weatherData = weatherData)
+                WeatherSearchBar(
+                    modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
+                    placeHolder = "Search for a Country",
+                    text = text,
+                    onTextChanged = { newValue -> viewModel.updateSearchTextState(newValue) },
+                    noResultPlaceHolder = "No Results",
+                    onResultsReceived = { results },
+                    onResultClicked = { country -> viewModel.getCities(country.code) },
+                )
+            }
         }
     }
 }
@@ -83,7 +101,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 fun WeatherDataList(
     modifier: Modifier = Modifier,
-    weatherData: List<Weather> = Weather.getDummyData()
+    weatherData: List<Weather>
 ) {
     LazyColumn(
         modifier = modifier,
@@ -95,8 +113,9 @@ fun WeatherDataList(
                 currentTemperature = it.currentTemperature,
                 highTemperature = it.highTemperature,
                 lowTemperature = it.lowTemperature,
-                location = it.sunrise.toString(),
-                description = it.windDegree.toString()
+                location = "${it.cityName}, ${it.countryCode}",
+                description = it.getWeatherDescription(),
+                icon = it.getWeatherIcon()
             )
         }
     }

@@ -23,9 +23,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.R
-import com.trianglz.weatherapp.data.weather.Weather
-import com.trianglz.weatherapp.ui.theme.WeatherAppTheme
+import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.ui.theme.BackgroundGradient
+import com.trianglz.weatherapp.ui.theme.WeatherAppTheme
 
 @Composable
 fun RectangleShapePreview() {

@@ -1,4 +1,4 @@
-package com.trianglz.weatherapp.data.city
+package com.trianglz.weatherapp.data.models.city
 
 import com.google.gson.annotations.SerializedName
 

@@ -8,5 +8,17 @@ data class Country(
     @field:SerializedName("name")
     val name: String
 ) {
-
+    companion object {
+        fun getDummyCountries(): List<Country> = listOf(
+            Country("EG", "Egypt"),
+            Country("US", "United States"),
+            Country("US", "United States"),
+            Country("US", "United States"),
+            Country("US", "United States"),
+            Country("US", "United States"),
+            Country("US", "United States"),
+            Country("US", "United States"),
+            Country("ET", "Ethiopia")
+        )
+    }
 }

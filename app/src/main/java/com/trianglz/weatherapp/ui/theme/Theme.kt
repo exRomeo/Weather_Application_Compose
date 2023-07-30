@@ -58,6 +58,7 @@ fun WeatherAppTheme(
     }
 
     MaterialTheme(
+        shapes = shapes,
         colorScheme = ColorScheme,
         typography = Typography,
         content = content

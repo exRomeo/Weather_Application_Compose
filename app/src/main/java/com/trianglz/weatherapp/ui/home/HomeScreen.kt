@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.trianglz.weatherapp.data.country.Country
 import com.trianglz.weatherapp.data.weather.Weather
 import com.trianglz.weatherapp.ui.components.WeatherCard
 import com.trianglz.weatherapp.ui.components.WeatherSearchBar
@@ -68,7 +69,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
                 placeHolder = "Search for a Country",
                 text = text,
-                onTextChanged = { newValue -> text = newValue })
+                onTextChanged = { newValue -> text = newValue },
+                noResultPlaceHolder = "No Results",
+                onResultsReceived = { Country.getDummyCountries() },
+                onResultClicked = {},
+            )
             WeatherDataList()
         }
     }

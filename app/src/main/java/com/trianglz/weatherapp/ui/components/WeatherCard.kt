@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -26,18 +27,7 @@ import com.trianglz.weatherapp.R
 import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.ui.theme.WeatherAppTheme
-
-@Composable
-fun RectangleShapePreview() {
-
-}
-
-@Preview
-@Composable
-fun RectangleShapePreviewLight() {
-    RectangleShapePreview()
-}
-
+import com.trianglz.weatherapp.ui.theme.lavender
 
 @Composable
 fun WeatherCard(
@@ -72,12 +62,20 @@ fun WeatherCard(
             ) {
                 Text(
                     text = "H:$highTemperature° L:$lowTemperature°",
-                    style = MaterialTheme.typography.labelSmall
+                    style = MaterialTheme.typography.bodyMedium.copy(color = lavender)
                 )
-                Text(
-                    text = location,
-                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground)
-                )
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom){
+                    Text( modifier = Modifier.weight(1f),
+                        text = location,
+                        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground)
+                    )
+                    Text(
+                        modifier = Modifier
+                            ,
+                        text = description,
+                        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+                    )
+                }
             }
 
             Image(
@@ -89,13 +87,7 @@ fun WeatherCard(
                 contentDescription = null
             )
 
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 20.dp, horizontal = 24.dp)
-                    .align(Alignment.BottomEnd),
-                text = description,
-                style = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onBackground),
-            )
+
         }
     }
 

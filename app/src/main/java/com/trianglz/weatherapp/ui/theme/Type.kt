@@ -1,7 +1,6 @@
 package com.trianglz.weatherapp.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -15,7 +14,6 @@ val Typography = Typography(
         lineHeight = 13.sp,
         fontWeight = FontWeight(400),
         letterSpacing = 0.07.sp,
-        color = Color(0x99EBEBF5),
     ),
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -56,7 +54,7 @@ val Typography = Typography(
         fontFamily = FontFamily.Default,
         fontSize = 17.sp,
         lineHeight = 22.sp,
-        fontWeight = FontWeight(600),
+        fontWeight = FontWeight(400),
 
         ),
     headlineMedium = TextStyle(

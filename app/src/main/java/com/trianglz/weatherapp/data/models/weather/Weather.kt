@@ -30,11 +30,11 @@ class Weather(
 ) {
 
     fun getWeatherDescription(): String = when {
-        currentTemperature >= 30.0 -> "Hot and sunny."
-        currentTemperature >= 20.0 -> "Warm and pleasant."
-        currentTemperature >= 10.0 -> "Cool and comfortable."
-        currentTemperature >= 0.0 -> "Cold. Please bundle up!"
-        else -> "Very cold. Stay indoors and keep warm."
+        currentTemperature >= 30.0 -> "Hot."
+        currentTemperature >= 20.0 -> "Warm."
+        currentTemperature >= 10.0 -> "Cool."
+        currentTemperature >= 0.0 -> "Freezing!"
+        else -> "Stay indoors."
     }
 
     fun getWeatherIcon(): Int {

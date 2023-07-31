@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.trianglz.weatherapp.core.uistate.UIState
+import com.trianglz.weatherapp.core.utils.IUtilityManager
 import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
@@ -17,15 +19,20 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val repository: IRepository) : ViewModel() {
+class HomeViewModel(
+    private val repository: IRepository,
+    private val utilityManager: IUtilityManager
+) : ViewModel() {
 
+    private var _homeUIState: MutableStateFlow<UIState> = MutableStateFlow(UIState.Idle)
+    val homeUIState = _homeUIState.asStateFlow()
 
     private var _searchTextState: MutableStateFlow<String> = MutableStateFlow("")
     val searchTextState = _searchTextState.asStateFlow()
 
     fun updateSearchTextState(newValue: String) {
         _searchTextState.value = newValue
-        if (newValue.isEmpty())
+        if (newValue.isBlank())
             _searchResult.value = emptyList()
     }
 
@@ -48,83 +55,99 @@ class HomeViewModel(private val repository: IRepository) : ViewModel() {
         get() = _searchResult.asStateFlow()
 
 
-    fun getCountries(countryName: String, limit: Int) {
-        viewModelScope.launch {
-            try {
-                _searchResult.value =
-                    repository.getCountries(countryName = countryName, limit = limit)
-            } catch (e: Exception) {
-                Log.i("TAG", "getCountries Exception: ${e.message}")
+    private fun getCountries(countryName: String, limit: Int) {
+        if (utilityManager.isInternetAvailable())
+            viewModelScope.launch {
+                try {
+                    _searchResult.value =
+                        repository.getCountries(countryName = countryName, limit = limit)
+                } catch (e: Throwable) {
+                    _homeUIState.value = UIState.Failure(utilityManager.handleException(e))
+                    _searchResult.value = emptyList()
+                }
             }
-        }
+        else _homeUIState.value = UIState.NetworkError
     }
 
     private var _cities: MutableStateFlow<List<City>> = MutableStateFlow(emptyList())
     private val cities = _cities.asStateFlow()
 
     fun getCities(countryCode: String, limit: Int = 5) {
-        viewModelScope.launch {
-            try {
-                _cities.value = repository.getCities(
-                    countryCode = countryCode,
-                    limit = limit
-                )
-
-            } catch (e: Exception) {
-                Log.i("TAG", "getCities Exception: ${e.message}")
+        if (utilityManager.isInternetAvailable())
+            viewModelScope.launch {
+                _homeUIState.value = UIState.Loading
+                try {
+                    _cities.value = repository.getCities(
+                        countryCode = countryCode,
+                        limit = limit
+                    )
+                } catch (e: Throwable) {
+                    _homeUIState.value = UIState.Failure(utilityManager.handleException(e))
+                }
             }
-        }
+        else _homeUIState.value = UIState.NetworkError
+
     }
+
+    private var weatherDataList: MutableList<Weather> = mutableListOf()
 
     private fun observeCities() {
         viewModelScope.launch {
             cities.collectLatest {
+                _homeUIState.value = UIState.Loading
+
                 it.forEach { city ->
                     getWeather(city)
-
+                    Log.i("TAG", "observeCities: ${city.name}")
                 }
+                _homeUIState.value =
+                    UIState.Success(weatherDataList)
             }
         }
     }
-
-    private var weatherDataList: MutableList<Weather> = mutableListOf()
-    private var _weatherData: MutableStateFlow<List<Weather>> = MutableStateFlow(emptyList())
-    val weatherData = _weatherData.asStateFlow()
 
 
     private fun updateWeatherList(weather: Weather? = null, clearList: Boolean = false) {
         if (clearList)
-            weatherDataList.clear()
+            weatherDataList = mutableListOf()
         if (weather != null) {
             weatherDataList = ArrayList(weatherDataList)
             weatherDataList.add(weather)
         }
-        _weatherData.value = weatherDataList
+
     }
 
     private suspend fun getWeather(city: City) {
-        try {
-            val weather = repository.getWeather(city.latitude, city.longitude)
-            weather.apply {
-                cityName = city.name
-                countryCode = city.country
+        if (utilityManager.isInternetAvailable())
+            try {
+                val weather = repository.getWeather(city.latitude, city.longitude)
+                weather.apply {
+                    cityName = city.name
+                    countryCode = city.country
+                }
+                updateWeatherList(weather = weather)
+
+            } catch (e: Throwable) {
+                _homeUIState.value = UIState.Failure(utilityManager.handleException(e))
             }
-            updateWeatherList(weather = weather)
-        } catch (e: Exception) {
-            Log.i("TAG", "getWeather Exception:$city ${e.message}")
-        }
+        else _homeUIState.value = UIState.NetworkError
+
     }
 
     init {
         observeSearchTextState()
         observeCities()
+        if (!utilityManager.isInternetAvailable())
+            _homeUIState.value = UIState.NetworkError
     }
 }
 
-class HomeViewModelFactory(private val repository: IRepository) : ViewModelProvider.Factory {
+class HomeViewModelFactory(
+    private val repository: IRepository, private val utilityManager: IUtilityManager
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(HomeViewModel::class.java))
-            HomeViewModel(repository) as T
+            HomeViewModel(repository, utilityManager) as T
         else throw Exception("Couldn't find ViewModel Class")
     }
 }

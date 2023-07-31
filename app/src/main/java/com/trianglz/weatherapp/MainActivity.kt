@@ -5,13 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.trianglz.weatherapp.ui.home.HomeScreen
-import com.trianglz.weatherapp.ui.theme.WeatherAppTheme
 import com.trianglz.weatherapp.ui.theme.BackgroundGradient
+import com.trianglz.weatherapp.ui.theme.WeatherAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,21 +18,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherAppTheme {
                 // A surface container using the 'background' color from the theme
-                Column(modifier = Modifier.background(BackgroundGradient)) {
-                    HomeScreen()
+//                Column(modifier = Modifier.background(BackgroundGradient)) {
+                    HomeScreen(modifier = Modifier.background(BackgroundGradient))
                 }
 
-            }
+//            }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
 
 @Preview(showBackground = true)

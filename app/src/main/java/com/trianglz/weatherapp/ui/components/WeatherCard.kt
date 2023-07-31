@@ -22,7 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,14 +45,20 @@ fun WeatherCard(
     description: String,
     @DrawableRes icon: Int = R.drawable.sun_cloud_angled_rain,
 ) {
-    Box(modifier = modifier.aspectRatio(1.9546297f)) {
-        Image(
-            painter = painterResource(
-                id = R.drawable.rectangle
-            ),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
+    Box(modifier = modifier.aspectRatio(1.9546297f).drawBehind {
+        drawPath(
+            slantShape(),
+            brush = Brush.horizontalGradient(listOf(Color(0xFF5A37B6), Color(0xFF382B86))),
+            style = Fill
         )
+    }) {
+//        Image(
+//            painter = painterResource(
+//                id = R.drawable.rectangle
+//            ),
+//            contentDescription = null,
+//            contentScale = ContentScale.FillWidth
+//        )
         Column(
             Modifier
                 .fillMaxHeight()

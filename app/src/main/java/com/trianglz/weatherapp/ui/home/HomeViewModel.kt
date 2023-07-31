@@ -9,7 +9,10 @@ import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.data.repository.IRepository
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -86,7 +89,6 @@ class HomeViewModel(
                 }
             }
         else _homeUIState.value = UIState.NetworkError
-
     }
 
     private var weatherDataList: MutableList<Weather> = mutableListOf()
@@ -94,11 +96,16 @@ class HomeViewModel(
     private fun observeCities() {
         viewModelScope.launch {
             cities.filter { it.isNotEmpty() }.collectLatest {
-
                 _homeUIState.value = UIState.Loading
+                val deferred: MutableList<Deferred<Unit>> = mutableListOf()
                 it.forEach { city ->
-                    getWeather(city)
+                    deferred.add(
+                        async {
+                            getWeather(city)
+                        }
+                    )
                 }
+                deferred.awaitAll()
                 _homeUIState.value =
                     UIState.Success(weatherDataList)
 

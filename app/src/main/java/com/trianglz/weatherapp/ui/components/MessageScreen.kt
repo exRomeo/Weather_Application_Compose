@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.trianglz.weatherapp.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.ui.theme.lavender
@@ -22,7 +23,7 @@ fun MessageScreen(modifier: Modifier = Modifier, message: String) {
         Text(
             modifier = Modifier.fillMaxWidth(0.9f),
             text = message,
-            style = MaterialTheme.typography.headlineSmall.copy(color = lavender)
+            style = MaterialTheme.typography.headlineSmall.copy(color = lavender, textAlign = TextAlign.Center)
         )
     }
 

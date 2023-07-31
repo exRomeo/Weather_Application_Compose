@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,60 +42,62 @@ fun WeatherCard(
     description: String,
     @DrawableRes icon: Int = R.drawable.sun_cloud_angled_rain,
 ) {
-    Column(modifier = modifier) {
-        Box {
-            Image(
-                painter = painterResource(
-                    id = R.drawable.rectangle
-                ),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth
-            )
+    Box(modifier = modifier.aspectRatio(1.9546297f)) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.rectangle
+            ),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth
+        )
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .padding(20.dp)
+                .align(Alignment.TopStart), verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = "$currentTemperature°",
                 style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground),
                 modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(20.dp)
             )
-            Column(
-                Modifier
-                    .padding(20.dp)
-                    .align(Alignment.BottomStart)
-            ) {
+            Spacer(modifier = Modifier.heightIn(16.dp))
+            Column {
                 Text(
                     text = "H:$highTemperature° L:$lowTemperature°",
                     style = MaterialTheme.typography.bodyMedium.copy(color = lavender)
                 )
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom){
-                    Text( modifier = Modifier.weight(1f),
-                        text = location,
-                        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground)
-                    )
-                    Text(
-                        modifier = Modifier
-                            ,
-                        text = description,
-                        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
-                    )
-                }
+                Text(
+                    text = location,
+                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground)
+                )
             }
 
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .align(Alignment.TopEnd),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Image(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
                     .offset(y = (-10).dp)
                     .fillMaxWidth(0.4f),
                 painter = painterResource(id = icon),
                 contentDescription = null
             )
-
-
+            Text(
+                modifier = Modifier.padding(bottom = 20.dp),
+                text = description,
+                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+            )
         }
     }
 
 }
-
 
 @Preview(
     device = "spec:parent=pixel_4",
@@ -103,20 +108,26 @@ fun WeatherCard(
 fun WeatherCardPreview() {
     WeatherAppTheme {
 
-        WeatherCard(
-            currentTemperature = 23,
-            highTemperature = 26,
-            lowTemperature = 8,
-            location = "Montreal, Canada",
-            description = "Partly Cloudy",
-            icon = R.drawable.sun_cloud_angled_rain,
-            modifier = Modifier
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            WeatherCard(
+                currentTemperature = 23,
+                highTemperature = 26,
+                lowTemperature = 8,
+                location = "Montreal, Canada",
+                description = "Partly Cloudy",
+                icon = R.drawable.sun_cloud_angled_rain,
+                modifier = Modifier
 
-        )
+            )
+        }
     }
 }
 
-@Preview(device = "spec:width=411dp,height=891dp", showSystemUi = true, showBackground = true)
+@Preview(
+    device = "spec:width=411dp,height=891dp",
+    showSystemUi = true,
+    showBackground = true
+)
 @Composable
 fun WeatherListPreview() {
     WeatherAppTheme {

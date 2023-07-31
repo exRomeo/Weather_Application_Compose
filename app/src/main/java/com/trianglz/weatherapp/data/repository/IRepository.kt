@@ -6,8 +6,7 @@ import com.trianglz.weatherapp.data.models.weather.Weather
 
 interface IRepository {
     suspend fun getCountries(
-        countryName: String,
-        limit: Int
+        countryName: String
     ): List<Country>
 
     suspend fun getCities(

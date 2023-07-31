@@ -8,12 +8,10 @@ import com.trianglz.weatherapp.data.models.weather.Weather
 class Repository(private val dataSource: IRemoteDataSource) : IRepository {
 
     override suspend fun getCountries(
-        countryName: String,
-        limit: Int
+        countryName: String
     ): List<Country> =
         dataSource.getCountries(
-            countryName = countryName,
-            limit = limit
+            countryName = countryName
         )
 
     override suspend fun getCities(

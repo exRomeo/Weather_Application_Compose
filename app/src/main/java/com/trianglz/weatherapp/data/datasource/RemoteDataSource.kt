@@ -14,8 +14,7 @@ class RemoteDataSource(
     IRemoteDataSource {
 
     override suspend fun getCountries(
-        countryName: String,
-        limit: Int
+        countryName: String
     ): List<Country> =
         restCountriesAPI.getCountries(
             countryName = countryName

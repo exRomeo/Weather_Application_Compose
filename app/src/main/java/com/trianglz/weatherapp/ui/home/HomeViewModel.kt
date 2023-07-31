@@ -1,6 +1,5 @@
 package com.trianglz.weatherapp.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,6 +9,7 @@ import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.data.repository.IRepository
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,15 +36,15 @@ class HomeViewModel(
             _searchResult.value = emptyList()
     }
 
+    @OptIn(FlowPreview::class)
     private fun observeSearchTextState() {
         viewModelScope.launch {
             searchTextState.filter { it.isNotBlank() }
                 .distinctUntilChanged()
                 .debounce(500)
                 .collectLatest {
-                    Log.i("TAG", "observeSearchTextState: $it")
                     updateWeatherList(clearList = true)
-                    getCountries(it, 30)
+                    getCountries(it)
                 }
         }
     }
@@ -55,12 +55,12 @@ class HomeViewModel(
         get() = _searchResult.asStateFlow()
 
 
-    private fun getCountries(countryName: String, limit: Int) {
+    private fun getCountries(countryName: String) {
         if (utilityManager.isInternetAvailable())
             viewModelScope.launch {
                 try {
                     _searchResult.value =
-                        repository.getCountries(countryName = countryName, limit = limit)
+                        repository.getCountries(countryName = countryName)
                 } catch (e: Throwable) {
                     _homeUIState.value = UIState.Failure(utilityManager.handleException(e))
                     _searchResult.value = emptyList()
@@ -93,15 +93,15 @@ class HomeViewModel(
 
     private fun observeCities() {
         viewModelScope.launch {
-            cities.collectLatest {
-                _homeUIState.value = UIState.Loading
+            cities.filter { it.isNotEmpty() }.collectLatest {
 
+                _homeUIState.value = UIState.Loading
                 it.forEach { city ->
                     getWeather(city)
-                    Log.i("TAG", "observeCities: ${city.name}")
                 }
                 _homeUIState.value =
                     UIState.Success(weatherDataList)
+
             }
         }
     }
@@ -142,6 +142,7 @@ class HomeViewModel(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 class HomeViewModelFactory(
     private val repository: IRepository, private val utilityManager: IUtilityManager
 ) : ViewModelProvider.Factory {

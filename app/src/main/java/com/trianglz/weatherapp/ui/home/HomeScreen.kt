@@ -1,6 +1,5 @@
 package com.trianglz.weatherapp.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -64,9 +63,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         )
     )
 
-    val state by viewModel.homeUIState.collectAsState()
-
-    Log.i("TAG", "UISTATE: ${state.javaClass}")
     Scaffold(modifier = modifier, containerColor = Color.Transparent,
         topBar = {
             TopAppBar(

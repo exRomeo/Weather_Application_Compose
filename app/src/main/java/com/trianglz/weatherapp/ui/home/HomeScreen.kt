@@ -98,7 +98,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 .padding(it)
         ) {
             Box {
-                HomeScreenContent(modifier = Modifier.padding(top = 48.dp), uiState = uiState)
+                HomeScreenContent(modifier = Modifier.padding(top = 52.dp), uiState = uiState)
                 WeatherSearchBar(
                     modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
                     placeHolder = "Search for a Country",
@@ -140,8 +140,8 @@ fun WeatherDataList(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = spacedBy(16.dp)
+        contentPadding = PaddingValues(20.dp),
+        verticalArrangement = spacedBy(20.dp)
     ) {
         items(weatherData, key = { it.sunrise }) {
             WeatherCard(

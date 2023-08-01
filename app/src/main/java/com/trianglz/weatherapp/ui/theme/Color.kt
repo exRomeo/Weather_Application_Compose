@@ -3,15 +3,6 @@ package com.trianglz.weatherapp.ui.theme
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-
-
 //Theme Colors
 val lavender = Color(0xFF9E98B3)
 val darkPurple = Color(0xff1f1d47)
@@ -44,17 +35,11 @@ val md_theme_dark_outlineVariant = Color(0xFF47464F)
 val md_theme_dark_scrim = Color(0xFF000000)
 
 
-val seed = Color(0xFF1F1D47)
-
-
-
-
-val darkPurple2 = Color(0xFF45278B)
-val indigo = Color(0xFF2E335A)
-
 val BackgroundGradient = Brush.horizontalGradient(
     colors = listOf(
         /*indigo, darkPurple, indigo*/
         Color(0xFF302C5A), Color(0xFF3A2C68), Color(0xFF302C5A)
     )
 )
+
+val PurpleIndigoGradient = Brush.horizontalGradient(listOf(Color(0xFF5A37B6), Color(0xFF382B86)))

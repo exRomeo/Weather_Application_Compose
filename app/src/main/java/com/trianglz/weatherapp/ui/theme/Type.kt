@@ -87,7 +87,7 @@ val Typography = Typography(
         ),
     titleLarge = TextStyle(
         fontSize = 64.sp,
-        lineHeight = 41.sp,
+//        lineHeight = 41.sp,
         fontWeight = FontWeight(400),
         letterSpacing = 0.37.sp,
     )

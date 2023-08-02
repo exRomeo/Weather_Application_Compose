@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,13 +46,19 @@ fun WeatherCard(
 ) {
     Row(modifier = modifier
         .aspectRatio(342 / 184f)
+        .graphicsLayer {
+            shadowElevation = 5.dp.toPx()
+            shape = SlantShape(50.dp.toPx(), 0.625f)
+            clip = false
+        }
         .drawBehind {
             drawPath(
-                slantShape(),
+                getSlantPath(size, 50.dp.toPx(), 0.625f),
                 brush = PurpleIndigoGradient,
                 style = Fill
             )
-        }) {
+        }
+    ) {
         Column(
             Modifier
                 .fillMaxHeight()
@@ -86,8 +93,7 @@ fun WeatherCard(
             modifier = Modifier
                 .fillMaxHeight()
                 .offset(y = (-20).dp)
-                .weight(1f)
-            ,
+                .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
@@ -96,9 +102,13 @@ fun WeatherCard(
                 painter = painterResource(id = icon),
                 contentDescription = null
             )
-            Text(modifier = Modifier.padding(horizontal = 20.dp),
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp),
                 text = description,
-                style = MaterialTheme.typography.headlineMedium.copy(color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -215,7 +225,7 @@ fun WeatherListPreview() {
             items(5) {
                 WeatherCard(
                     currentTemperature = 200000000,
-                    highTemperature =300000000,
+                    highTemperature = 300000000,
                     lowTemperature = 100000000,
                     location = "Montreal, Canada, Canada, Canada, Canada, Canada, Canada, Canada, Canada, Canada, Canada",
                     description = "Partly Cloudy, and there is a good chance of rain so wear something water proof"

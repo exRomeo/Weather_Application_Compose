@@ -1,20 +1,38 @@
 package com.trianglz.weatherapp.data.repository
 
-import com.trianglz.weatherapp.data.datasource.IRemoteDataSource
+import com.trianglz.weatherapp.domain.remotesource.IRemoteDataSource
+import com.trianglz.weatherapp.domain.repository.IRepository
+import com.trianglz.weatherapp.domain.utils.IUtilityManager
+import com.trianglz.weatherapp.domain.utils.resource.Resource
 import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
-class Repository(private val dataSource: IRemoteDataSource) : IRepository {
+class Repository(
+    private val dataSource: IRemoteDataSource,
+    private val utilityManager: IUtilityManager
+) : IRepository {
 
     override suspend fun getCountries(
         countryName: String
-    ): List<Country> =
-        dataSource.getCountries(
-            countryName = countryName
-        )
+    ): Resource<List<Country>> =
+        if (utilityManager.isInternetAvailable())
+            try {
+                Resource.Success(
+                    dataSource.getCountries(
+                        countryName = countryName
+                    )
+                )
+            } catch (exception: Exception) {
+                Resource.Error(utilityManager.handleException(exception))
+            }
+        else Resource.Error("Please, check your internet connection")
 
-    override suspend fun getCities(
+
+    private suspend fun getCities(
         countryCode: String,
         limit: Int
     ): List<City> =
@@ -23,22 +41,48 @@ class Repository(private val dataSource: IRemoteDataSource) : IRepository {
             limit = limit
         )
 
-    override suspend fun getWeather(
-        cityName: String,
-        countryCode: String
-    ): Weather =
-        dataSource.getWeather(
-            cityName = cityName,
-            countryCode = countryCode
-        )
 
-    override suspend fun getWeather(
-        latitude: Double,
-        longitude: Double
-    ): Weather =
-        dataSource
-            .getWeather(
-                latitude = latitude,
-                longitude = longitude
-            )
+    private suspend fun getWeather(
+        city: City
+    ): Weather? {
+        return try {
+            dataSource
+                .getWeather(
+                    latitude = city.latitude,
+                    longitude = city.longitude
+                ).apply {
+                    cityName = city.name
+                    countryCode = city.country
+                }
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun getWeatherData(
+        countryCode: String,
+        limit: Int
+    ): Resource<List<Weather>> = coroutineScope {
+        if (utilityManager.isInternetAvailable())
+            try {
+                val list = getCities(countryCode, limit).map {
+                    async {
+                        getWeather(it)
+                    }
+                }.awaitAll().mapNotNull { it }.toList()
+
+                if (list.isEmpty())
+                    Resource.Error("This Country Has No Weather Data")
+                else
+                    Resource.Success(list)
+
+            } catch (exception: Exception) {
+
+                Resource.Error(utilityManager.handleException(exception))
+
+            }
+        else Resource.Error("Please, check your internet connection")
+    }
+
 }

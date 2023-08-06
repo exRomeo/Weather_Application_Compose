@@ -19,17 +19,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,47 +45,59 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.data.models.country.Country
-import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
-import com.trianglz.weatherapp.presentation.searchbarstate.rememberSearchBarState
+import com.trianglz.weatherapp.presentation.searchbarstate.SearchState
+import com.trianglz.weatherapp.presentation.searchbarstate.rememberSearchState
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
+import com.trianglz.weatherapp.presentation.ui.theme.darkPurple
 import com.trianglz.weatherapp.presentation.ui.theme.lavender
 
 
 @Composable
 fun WeatherSearchBar(
     modifier: Modifier = Modifier,
-    searchBarState: SearchBarState = rememberSearchBarState()
+    searchState: SearchState = rememberSearchState(),
+    text: String = "",
+    placeHolder: String = "",
+    onTextChanged: (String) -> Unit = {},
+    onCloseClicked: () -> Unit = { },
+    onItemClicked: (Country) -> Unit = {}
 ) {
     WeatherSearchBar(
         modifier = modifier,
-        text = searchBarState.text,
-        placeHolder = searchBarState.placeHolder,
-        onTextChanged = searchBarState.onTextChanged,
-        onResultsReceived = { searchBarState.result },
-        onResultClicked = searchBarState.onItemClicked,
-        noResultPlaceHolder = searchBarState.noResultMessage
+        text = text,
+        placeHolder = placeHolder,
+        noResultPlaceHolder = searchState.noResultMessage,
+        status = searchState.status,
+        results = searchState.result,
+        onTextChanged = onTextChanged,
+        onCloseClicked = onCloseClicked,
+        onResultClicked = onItemClicked
     )
 }
 
 @Composable
 fun WeatherSearchBar(
     modifier: Modifier = Modifier,
+    status: SearchBarStatus = SearchBarStatus.Idle,
     placeHolder: String = "",
     text: String = "",
+    onCloseClicked: () -> Unit = {},
     noResultPlaceHolder: String = "",
-    onResultsReceived: () -> List<Country> = { listOf() },
+    results: List<Country> = listOf(),
     onResultClicked: (Country) -> Unit = {},
     onTextChanged: (String) -> Unit = {}
 ) {
@@ -105,27 +118,23 @@ fun WeatherSearchBar(
         label = "animatedAlpha"
     )
     val animateBackground by animateColorAsState(
-        targetValue = if (inFocus)
-            MaterialTheme.colorScheme.primaryContainer
-        else
-            MaterialTheme.colorScheme.secondaryContainer,
+        targetValue = if (inFocus) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.secondaryContainer,
         animationSpec = tween(150, easing = EaseIn),
         label = "Animated Background"
     )
     Card(
-        modifier = modifier
-            .shadow(
-                elevation = animatedElevation,
-                ambientColor = Color.Black,
-                spotColor = Color.Black,
-                shape = MaterialTheme.shapes.small
-            ),
+        modifier = modifier.shadow(
+            elevation = animatedElevation,
+            ambientColor = Color.Black,
+            spotColor = Color.Black,
+            shape = MaterialTheme.shapes.small
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = animatedElevation),
         colors = CardDefaults.cardColors(containerColor = animateBackground)
     ) {
         PurpleSearchBar(
-            modifier =
-            Modifier
+            modifier = Modifier
                 .clip(MaterialTheme.shapes.small)
                 .onFocusChanged { state -> inFocus = state.isFocused },
             trailingIcon = {
@@ -136,34 +145,61 @@ fun WeatherSearchBar(
                 ) {
                     Icon(
                         modifier = Modifier.clickable {
-
                             if (text.isNotEmpty())
                                 onTextChanged("")
-                            else
+                            else {
                                 focusManager.clearFocus()
+                                onCloseClicked()
+                            }
+
                         },
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Rounded.Close,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             },
             leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = animatedAlpha)
-                )
+                when (status) {
+                    is SearchBarStatus.Idle -> Icon(
+                        imageVector = Icons.Rounded.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = animatedAlpha)
+                    )
+
+                    is SearchBarStatus.Loading -> CircularProgressIndicator(
+                        modifier = Modifier.scale(scale = 0.6f),
+                        strokeWidth = 5.dp,
+                        strokeCap = StrokeCap.Round,
+                        trackColor = darkPurple
+                    )
+
+                    is SearchBarStatus.Error -> Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onErrorContainer
+                    )
+
+                }
+
+
             },
             text = text,
+            textStyle = MaterialTheme
+                .typography
+                .bodyLarge
+                .copy(
+                    color = if (status is SearchBarStatus.Error)
+                        MaterialTheme.colorScheme.onErrorContainer
+                    else
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                ),
             placeHolder = {
                 Text(
                     text = placeHolder,
-                    style = MaterialTheme
-                        .typography
-                        .bodyLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
             },
             shape = MaterialTheme.shapes.small,
@@ -172,18 +208,16 @@ fun WeatherSearchBar(
         AnimatedVisibility(visible = inFocus) {
             Column(
                 modifier = Modifier
-                    .heightIn(max = 400.dp)
+                    .maxHeightScreenRatio(0.5f)
                     .animateContentSize()
             ) {
-                SearchResultsBox(
-                    countries = onResultsReceived(),
+                SearchResultsBox(countries = results,
                     noResultPlaceHolder = noResultPlaceHolder,
                     onResultClicked = {
                         onResultClicked(it)
                         focusManager.clearFocus()
                         onTextChanged("")
-                    }
-                )
+                    })
             }
         }
     }
@@ -196,7 +230,7 @@ fun PurpleSearchBar(
     modifier: Modifier = Modifier,
     text: String,
     placeHolder: (@Composable () -> Unit)? = null,
-    fontSize: TextUnit = MaterialTheme.typography.bodyLarge.fontSize,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimaryContainer),
     shape: CornerBasedShape,
     singleLine: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -204,16 +238,13 @@ fun PurpleSearchBar(
     trailingIcon: (@Composable () -> Unit)? = null,
     onTextChanged: (String) -> Unit,
 ) {
-    BasicTextField(
-        modifier = modifier
-            .fillMaxWidth(),
+    BasicTextField(modifier = modifier.fillMaxWidth(),
         value = text,
         singleLine = singleLine,
         onValueChange = onTextChanged,
         cursorBrush = SolidColor(lavender),
-        textStyle = TextStyle(color = lavender, fontSize),
-        decorationBox =
-        { innerTextField ->
+        textStyle = textStyle,
+        decorationBox = { innerTextField ->
             TextFieldDefaults.DecorationBox(
                 value = text,
                 innerTextField = innerTextField,
@@ -221,15 +252,13 @@ fun PurpleSearchBar(
                 singleLine = singleLine,
                 visualTransformation = VisualTransformation.None,
                 interactionSource = interactionSource,
-                contentPadding = PaddingValues(vertical = 12.dp, horizontal = 8.dp),
+                contentPadding = PaddingValues(vertical = 7.dp, horizontal = 8.dp),
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,
                 placeholder = placeHolder,
-                shape = shape
+                shape = shape,
             ) { }
-        }
-    )
-
+        })
 }
 
 @Composable
@@ -242,7 +271,7 @@ fun SearchResultsBox(
     LazyColumn(
         modifier = modifier
     ) {
-        items(countries) { country ->
+        items(countries, key = { it.code }) { country ->
             Row(
                 Modifier
                     .height(48.dp)
@@ -255,30 +284,41 @@ fun SearchResultsBox(
                     modifier = Modifier
                         .padding(horizontal = 48.dp)
                         .fillMaxWidth(),
-                    text = country.name.official
+                    text = country.name.common,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
-            if (country != countries.last())
-                Divider(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            if (country != countries.last()) Divider(
+                modifier = Modifier.padding(horizontal = 24.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
 
-        if (countries.isEmpty() && noResultPlaceHolder.isNotEmpty())
-            item {
-                Row(
-                    Modifier
-                        .height(48.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 48.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = noResultPlaceHolder)
-                }
+        if (countries.isEmpty() && noResultPlaceHolder.isNotBlank()) item {
+            Row(
+                Modifier
+                    .height(48.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 48.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = noResultPlaceHolder,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
+        }
 
     }
+}
+
+
+sealed class SearchBarStatus {
+    object Loading : SearchBarStatus()
+    object Error : SearchBarStatus()
+    object Idle : SearchBarStatus()
 }
 
 @Preview(showSystemUi = true, showBackground = true, device = "id:pixel_4")
@@ -290,13 +330,18 @@ fun WeatherSearchBarPreview() {
                 .fillMaxSize()
                 .background(BackgroundGradient)
         ) {
+            var status by remember { mutableStateOf(SearchBarStatus.Idle) }
             WeatherSearchBar(
                 modifier = Modifier.padding(8.dp),
                 placeHolder = "Search For A Country...",
+                status = status,
+                onCloseClicked = { status = SearchBarStatus.Idle },
+
                 onTextChanged = {},
                 text = "",
-                noResultPlaceHolder = "",
-                onResultClicked = {}, onResultsReceived = { emptyList() }
+                noResultPlaceHolder = "Emptee",
+                onResultClicked = {},
+                results = emptyList()
             )
         }
     }

@@ -5,8 +5,8 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 
 class ExceptionHandler : IExceptionHandler {
-    override fun handleException(exception: Exception): String = when (exception) {
-        is HttpException -> handleHttpException(exception = exception)
+    override fun handleException(throwable: Throwable): String = when (throwable) {
+        is HttpException -> handleHttpException(exception = throwable)
         is SocketTimeoutException -> "Request timed out. Please check your internet connection and try again."
         is IOException -> "Connection Error, Please check your internet connection."
         else -> "An error occurred. Please try again later."

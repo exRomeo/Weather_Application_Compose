@@ -1,12 +1,12 @@
 package com.trianglz.weatherapp.data.repository
 
+import com.trianglz.weatherapp.data.models.city.City
+import com.trianglz.weatherapp.data.models.country.Country
+import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.domain.remotesource.IRemoteDataSource
 import com.trianglz.weatherapp.domain.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.IUtilityManager
 import com.trianglz.weatherapp.domain.utils.resource.Resource
-import com.trianglz.weatherapp.data.models.city.City
-import com.trianglz.weatherapp.data.models.country.Country
-import com.trianglz.weatherapp.data.models.weather.Weather
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -78,11 +78,8 @@ class Repository(
                     Resource.Success(list)
 
             } catch (exception: Exception) {
-
                 Resource.Error(utilityManager.handleException(exception))
-
             }
         else Resource.Error("Please, check your internet connection")
     }
-
 }

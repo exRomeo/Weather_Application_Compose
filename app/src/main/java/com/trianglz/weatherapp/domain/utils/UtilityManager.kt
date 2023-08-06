@@ -11,6 +11,6 @@ class UtilityManager(
         connectionUtility.isInternetAvailable()
 
     override fun handleException(exception: Exception): String =
-        exceptionHandler.handleException(exception = exception)
+        exceptionHandler.handleException(exception)
 
 }

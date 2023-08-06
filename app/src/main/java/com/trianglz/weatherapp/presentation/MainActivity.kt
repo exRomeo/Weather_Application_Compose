@@ -1,4 +1,4 @@
-package com.trianglz.weatherapp
+package com.trianglz.weatherapp.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

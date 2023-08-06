@@ -29,7 +29,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
+@Preview(device = "id:pixel_7_pro", showSystemUi = true, showBackground = true)
 @Composable
 fun LoadingScreenPreview() {
     LoadingScreen(modifier = Modifier.drawBehind { drawRect(BackgroundGradient) })

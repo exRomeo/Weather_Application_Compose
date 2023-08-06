@@ -1,5 +1,5 @@
 package com.trianglz.weatherapp.domain.utils.exceptionhandler
 
 interface IExceptionHandler {
-    fun handleException(exception: Exception): String
+    fun handleException(throwable: Throwable): String
 }

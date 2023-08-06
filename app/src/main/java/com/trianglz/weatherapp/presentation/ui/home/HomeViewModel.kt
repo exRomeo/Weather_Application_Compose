@@ -1,5 +1,6 @@
 package com.trianglz.weatherapp.presentation.ui.home
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -7,14 +8,16 @@ import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.domain.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.resource.Resource
+import com.trianglz.weatherapp.presentation.searchbarstate.SearchState
+import com.trianglz.weatherapp.presentation.ui.components.SearchBarStatus
+import com.trianglz.weatherapp.presentation.viewcontract.UIAction
+import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -31,53 +34,97 @@ class HomeViewModel(
         get() = _searchTextState
 
 
-    private var _searchResult: MutableStateFlow<List<Country>> = MutableStateFlow(emptyList())
-    val searchResult: StateFlow<List<Country>>
-        get() = _searchResult
+    private var _searchResultState: MutableStateFlow<UIState<List<Country>>> =
+        MutableStateFlow(UIState.Idle())
+    val searchResultState: StateFlow<UIState<List<Country>>>
+        get() = _searchResultState
 
 
-    fun updateSearchTextState(newValue: String) {
+    val searchState = mutableStateOf(SearchState())
+
+    private var _uiEvents: MutableSharedFlow<UIEvent> = MutableSharedFlow()
+    val uiEvents: SharedFlow<UIEvent>
+        get() = _uiEvents
+
+    private fun updateSearchTextState(newValue: String) {
         _searchTextState.value = newValue
         if (newValue.isBlank())
-            _searchResult.value = emptyList()
+            _searchResultState.value = UIState.Idle()
     }
 
-    @OptIn(FlowPreview::class)
     private fun observeSearchTextState() {
         viewModelScope.launch {
-            searchTextState.filter { it.isNotBlank() }
-                .distinctUntilChanged()
-                .debounce(500)
-                .collectLatest {
-                    getCountries(it)
+            searchTextState.debounce(250)
+                .collect {
+                    if (it.isNotBlank())
+                        getCountries(it)
                 }
         }
     }
 
-    private fun getCountries(countryName: String) {
+    private suspend fun getCountries(countryName: String) {
+        _searchResultState.value = UIState.Loading()
+        when (val countries = repository.getCountries(countryName = countryName)) {
+            is Resource.Success -> _searchResultState.value = UIState.Success(countries.data)
+            is Resource.Error -> _searchResultState.value = UIState.Failure(countries.message)
+        }
+    }
+
+    private fun getWeatherData(countryCode: String, limit: Int) {
         viewModelScope.launch {
-            when (val countries = repository.getCountries(countryName = countryName)) {
-                is Resource.Success -> _searchResult.value = countries.data
+            _homeUIState.value = UIState.Loading()
+            when (val result = repository.getWeatherData(countryCode, limit)) {
+                is Resource.Success -> _homeUIState.value = UIState.Success(result.data)
                 is Resource.Error -> {
-                    _homeUIState.value = UIState.Failure(countries.message)
-                    _searchResult.value = emptyList()
+                    _homeUIState.value = UIState.Failure(result.message)
+                    _uiEvents.emit(UIEvent.Message(result.message))
                 }
             }
         }
     }
 
-    fun getWeatherData(countryCode: String, limit: Int = 5) {
+
+    fun performAction(action: UIAction<Country>) {
+        when (action) {
+            is UIAction.SearchTextChanged -> updateSearchTextState(action.text)
+            is UIAction.ItemSelected -> getWeatherData(action.item.code, action.limit)
+        }
+    }
+
+
+    private fun observeSearchResultState() {
         viewModelScope.launch {
-            _homeUIState.value = UIState.Loading()
-            when (val result = repository.getWeatherData(countryCode, limit)) {
-                is Resource.Success -> _homeUIState.value = UIState.Success(result.data)
-                is Resource.Error -> _homeUIState.value = UIState.Failure(result.message)
+            searchResultState.collect {
+                when (it) {
+
+                    is UIState.Idle -> {
+                        searchState.value = SearchState()
+                    }
+
+                    is UIState.Loading -> {
+                        searchState.value =
+                            searchState.value.copy(status = SearchBarStatus.Loading)
+                    }
+
+                    is UIState.Success -> {
+                        searchState.value = SearchState(result = it.list)
+                    }
+
+                    is UIState.Failure -> {
+                        searchState.value =
+                            SearchState(
+                                status = SearchBarStatus.Error,
+                                noResultMessage = it.message
+                            )
+                    }
+                }
             }
         }
     }
 
     init {
         observeSearchTextState()
+        observeSearchResultState()
     }
 }
 

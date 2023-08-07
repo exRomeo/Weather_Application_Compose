@@ -36,7 +36,7 @@ class HomeViewModel(
 
     private var _searchResultState: MutableStateFlow<UIState<List<Country>>> =
         MutableStateFlow(UIState.Idle())
-    val searchResultState: StateFlow<UIState<List<Country>>>
+    private val searchResultState: StateFlow<UIState<List<Country>>>
         get() = _searchResultState
 
 
@@ -86,7 +86,9 @@ class HomeViewModel(
 
     fun performAction(action: UIAction<Country>) {
         when (action) {
+
             is UIAction.SearchTextChanged -> updateSearchTextState(action.text)
+
             is UIAction.ItemSelected -> getWeatherData(action.item.code, action.limit)
         }
     }

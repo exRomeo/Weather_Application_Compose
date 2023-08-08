@@ -1,14 +1,16 @@
 package com.trianglz.weatherapp.domain.utils.connection
 
-import android.content.Context
+import android.app.Application
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import javax.inject.Inject
 
-class ConnectionUtility(context: Context) : IConnectionUtility {
+class ConnectionUtility @Inject constructor(application: Application) : IConnectionUtility {
 
-    private val connectivityManager = context.getSystemService(
+    private val connectivityManager = application.getSystemService(
         ConnectivityManager::class.java
     )
+
     override fun isInternetAvailable(): Boolean {
         val network = connectivityManager.activeNetwork ?: return false
         val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false

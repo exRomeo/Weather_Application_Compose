@@ -2,7 +2,6 @@ package com.trianglz.weatherapp.presentation.ui.home
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
@@ -19,8 +18,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(
+class HomeViewModel @Inject constructor(
     private val repository: IRepository
 ) : ViewModel() {
 
@@ -127,16 +127,5 @@ class HomeViewModel(
     init {
         observeSearchTextState()
         observeSearchResultState()
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class HomeViewModelFactory(
-    private val repository: IRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return if (modelClass.isAssignableFrom(HomeViewModel::class.java))
-            HomeViewModel(repository) as T
-        else throw Exception("Couldn't find ViewModel Class")
     }
 }

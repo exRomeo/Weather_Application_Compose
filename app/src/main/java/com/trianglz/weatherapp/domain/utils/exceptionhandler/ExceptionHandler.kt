@@ -3,8 +3,9 @@ package com.trianglz.weatherapp.domain.utils.exceptionhandler
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
+import javax.inject.Inject
 
-class ExceptionHandler : IExceptionHandler {
+class ExceptionHandler @Inject constructor() : IExceptionHandler {
     override fun handleException(throwable: Throwable): String = when (throwable) {
         is HttpException -> handleHttpException(exception = throwable)
         is SocketTimeoutException -> "Request timed out. Please check your internet connection and try again."

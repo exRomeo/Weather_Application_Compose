@@ -10,8 +10,9 @@ import com.trianglz.weatherapp.domain.utils.resource.Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
-class Repository(
+class Repository @Inject constructor(
     private val dataSource: IRemoteDataSource,
     private val utilityManager: IUtilityManager
 ) : IRepository {

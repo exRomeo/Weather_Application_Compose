@@ -27,12 +27,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.trianglz.weatherapp.data.models.weather.Weather
-import com.trianglz.weatherapp.getRepository
 import com.trianglz.weatherapp.presentation.ui.components.LoadingScreen
 import com.trianglz.weatherapp.presentation.ui.components.MessageScreen
 import com.trianglz.weatherapp.presentation.ui.components.WeatherCard
@@ -46,14 +44,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    val appContext = LocalContext.current
-
-    val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModelFactory(
-            repository = appContext.applicationContext.getRepository()
-        )
-    )
+fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     EventProcessor(snackbarHostState = snackbarHostState, uiEvents = viewModel.uiEvents)
@@ -174,7 +165,8 @@ fun EventProcessor(snackbarHostState: SnackbarHostState, uiEvents: SharedFlow<UI
 @Preview(device = "id:pixel_4", showSystemUi = true, showBackground = true)
 @Composable
 fun HomeScreenPreview() {
+    val viewModel: HomeViewModel = viewModel()
     WeatherAppTheme {
-        HomeScreen(modifier = Modifier.background(BackgroundGradient))
+        HomeScreen(modifier = Modifier.background(BackgroundGradient), viewModel = viewModel)
     }
 }

@@ -2,8 +2,9 @@ package com.trianglz.weatherapp.domain.utils
 
 import com.trianglz.weatherapp.domain.utils.connection.IConnectionUtility
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.IExceptionHandler
+import javax.inject.Inject
 
-class UtilityManager(
+class UtilityManager @Inject constructor(
     private val connectionUtility: IConnectionUtility,
     private val exceptionHandler: IExceptionHandler
 ) : IUtilityManager {

@@ -5,21 +5,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
-import com.trianglz.weatherapp.domain.repository.IRepository
+import com.trianglz.weatherapp.data.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.resource.Resource
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchState
 import com.trianglz.weatherapp.presentation.ui.components.SearchBarStatus
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: IRepository
 ) : ViewModel() {
@@ -54,8 +57,9 @@ class HomeViewModel @Inject constructor(
 
     private fun observeSearchTextState() {
         viewModelScope.launch {
-            searchTextState.debounce(250)
-                .collect {
+            searchTextState/*.debounce(250)*/
+                .collectLatest {
+                    delay(250)
                     if (it.isNotBlank())
                         getCountries(it)
                 }

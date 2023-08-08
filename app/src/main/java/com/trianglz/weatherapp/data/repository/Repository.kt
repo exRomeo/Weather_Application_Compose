@@ -3,8 +3,7 @@ package com.trianglz.weatherapp.data.repository
 import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
-import com.trianglz.weatherapp.domain.remotesource.IRemoteDataSource
-import com.trianglz.weatherapp.domain.repository.IRepository
+import com.trianglz.weatherapp.data.remotesource.IRemoteDataSource
 import com.trianglz.weatherapp.domain.utils.IUtilityManager
 import com.trianglz.weatherapp.domain.utils.resource.Resource
 import kotlinx.coroutines.async
@@ -19,7 +18,7 @@ class Repository @Inject constructor(
 
     override suspend fun getCountries(
         countryName: String
-    ): Resource<List<Country>> =
+    ): Resource<List<Country>> = coroutineScope {
         if (utilityManager.isInternetAvailable())
             try {
                 Resource.Success(
@@ -31,6 +30,7 @@ class Repository @Inject constructor(
                 Resource.Error(utilityManager.handleException(exception))
             }
         else Resource.Error("Please, check your internet connection")
+    }
 
 
     private suspend fun getCities(

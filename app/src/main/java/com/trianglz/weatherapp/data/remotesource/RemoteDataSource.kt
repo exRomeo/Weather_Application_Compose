@@ -5,7 +5,6 @@ import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.data.remotesource.apiservice.apininja.ApiNinja
 import com.trianglz.weatherapp.data.remotesource.apiservice.restcountries.RestCountriesAPI
-import com.trianglz.weatherapp.domain.remotesource.IRemoteDataSource
 import javax.inject.Inject
 import javax.inject.Named
 

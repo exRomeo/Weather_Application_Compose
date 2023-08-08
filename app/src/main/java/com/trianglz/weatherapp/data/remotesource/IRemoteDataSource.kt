@@ -1,4 +1,4 @@
-package com.trianglz.weatherapp.domain.remotesource
+package com.trianglz.weatherapp.data.remotesource
 
 import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country

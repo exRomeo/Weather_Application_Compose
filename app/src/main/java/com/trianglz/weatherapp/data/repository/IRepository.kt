@@ -1,8 +1,8 @@
-package com.trianglz.weatherapp.domain.repository
+package com.trianglz.weatherapp.data.repository
 
-import com.trianglz.weatherapp.domain.utils.resource.Resource
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.domain.utils.resource.Resource
 
 interface IRepository {
     suspend fun getCountries(

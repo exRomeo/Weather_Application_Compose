@@ -1,11 +1,9 @@
 package com.trianglz.weatherapp.di.modules
 
-import android.app.Application
-import com.trianglz.weatherapp.WeatherApplication
+import com.trianglz.weatherapp.data.remotesource.IRemoteDataSource
 import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
+import com.trianglz.weatherapp.data.repository.IRepository
 import com.trianglz.weatherapp.data.repository.Repository
-import com.trianglz.weatherapp.domain.remotesource.IRemoteDataSource
-import com.trianglz.weatherapp.domain.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.IUtilityManager
 import com.trianglz.weatherapp.domain.utils.UtilityManager
 import com.trianglz.weatherapp.domain.utils.connection.ConnectionUtility
@@ -14,13 +12,13 @@ import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.IExceptionHandler
 import dagger.Binds
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 abstract class WeatherAppModule {
-
-    @Binds
-    abstract fun bindsWeatherApplication(weatherApplication: WeatherApplication): Application
 
     @Binds
     @Singleton

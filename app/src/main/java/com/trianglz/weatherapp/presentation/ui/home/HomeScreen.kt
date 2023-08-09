@@ -81,7 +81,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
     ) { paddingValues ->
         val text by viewModel.searchTextState.collectAsState()
-        val searchState by viewModel.searchState
+        val searchState = viewModel.searchState
         val uiState by viewModel.homeUIState.collectAsState()
         Box(
             modifier = Modifier
@@ -100,8 +100,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         )
                     )
                 },
-                text = text,
-                placeHolder = "Search For a Country..."
+                text = text
             )
         }
     }

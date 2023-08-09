@@ -1,6 +1,8 @@
 package com.trianglz.weatherapp.presentation.ui.home
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trianglz.weatherapp.data.models.country.Country
@@ -43,7 +45,9 @@ class HomeViewModel @Inject constructor(
         get() = _searchResultState
 
 
-    val searchState = mutableStateOf(SearchState())
+    var searchState by mutableStateOf(SearchState())
+        private set
+    private var currentCountry: String = "Search For a Country..."
 
     private var _uiEvents: MutableSharedFlow<UIEvent> = MutableSharedFlow()
     val uiEvents: SharedFlow<UIEvent>
@@ -57,7 +61,7 @@ class HomeViewModel @Inject constructor(
 
     private fun observeSearchTextState() {
         viewModelScope.launch {
-            searchTextState/*.debounce(250)*/
+            searchTextState
                 .collectLatest {
                     delay(250)
                     if (it.isNotBlank())
@@ -74,10 +78,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getWeatherData(countryCode: String, limit: Int) {
+    private fun getWeatherData(country: Country, limit: Int) {
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
-            when (val result = repository.getWeatherData(countryCode, limit)) {
+            currentCountry = country.name.common
+            when (val result = repository.getWeatherData(country.code, limit)) {
                 is Resource.Success -> _homeUIState.value = UIState.Success(result.data)
                 is Resource.Error -> {
                     _homeUIState.value = UIState.Failure(result.message)
@@ -93,7 +98,7 @@ class HomeViewModel @Inject constructor(
 
             is UIAction.SearchTextChanged -> updateSearchTextState(action.text)
 
-            is UIAction.ItemSelected -> getWeatherData(action.item.code, action.limit)
+            is UIAction.ItemSelected -> getWeatherData(action.item, action.limit)
         }
     }
 
@@ -104,23 +109,35 @@ class HomeViewModel @Inject constructor(
                 when (it) {
 
                     is UIState.Idle -> {
-                        searchState.value = SearchState()
+                        searchState = searchState.copy(
+                            placeHolder = currentCountry,
+                            status = SearchBarStatus.Idle,
+                            noResultMessage = "",
+                            result = emptyList()
+                        )
                     }
 
                     is UIState.Loading -> {
-                        searchState.value =
-                            searchState.value.copy(status = SearchBarStatus.Loading)
+                        searchState =
+                            searchState.copy(
+                                status = SearchBarStatus.Loading
+                            )
                     }
 
                     is UIState.Success -> {
-                        searchState.value = SearchState(result = it.list)
+                        searchState =
+                            searchState.copy(
+                                status = SearchBarStatus.Idle,
+                                result = it.list
+                            )
                     }
 
                     is UIState.Failure -> {
-                        searchState.value =
-                            SearchState(
+                        searchState =
+                            searchState.copy(
                                 status = SearchBarStatus.Error,
-                                noResultMessage = it.message
+                                noResultMessage = it.message,
+                                result = emptyList()
                             )
                     }
                 }

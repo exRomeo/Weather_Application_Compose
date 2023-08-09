@@ -71,7 +71,6 @@ fun WeatherSearchBar(
     modifier: Modifier = Modifier,
     searchState: SearchState = rememberSearchState(),
     text: String = "",
-    placeHolder: String = "",
     onTextChanged: (String) -> Unit = {},
     onCloseClicked: () -> Unit = { },
     onItemClicked: (Country) -> Unit = {}
@@ -79,7 +78,7 @@ fun WeatherSearchBar(
     WeatherSearchBar(
         modifier = modifier,
         text = text,
-        placeHolder = placeHolder,
+        placeHolder = searchState.placeHolder,
         noResultPlaceHolder = searchState.noResultMessage,
         status = searchState.status,
         results = searchState.result,

@@ -4,36 +4,22 @@ import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
 import com.trianglz.weatherapp.data.remotesource.IRemoteDataSource
-import com.trianglz.weatherapp.domain.utils.IUtilityManager
-import com.trianglz.weatherapp.domain.utils.resource.Resource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import com.trianglz.weatherapp.domain.repository.IRepository
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-    private val dataSource: IRemoteDataSource,
-    private val utilityManager: IUtilityManager
+    private val dataSource: IRemoteDataSource
 ) : IRepository {
 
     override suspend fun getCountries(
         countryName: String
-    ): Resource<List<Country>> = coroutineScope {
-        if (utilityManager.isInternetAvailable())
-            try {
-                Resource.Success(
-                    dataSource.getCountries(
-                        countryName = countryName
-                    )
-                )
-            } catch (exception: Exception) {
-                Resource.Error(utilityManager.handleException(exception))
-            }
-        else Resource.Error("Please, check your internet connection")
-    }
+    ): List<Country> =
+        dataSource.getCountries(
+            countryName = countryName
+        )
 
 
-    private suspend fun getCities(
+    override suspend fun getCities(
         countryCode: String,
         limit: Int
     ): List<City> =
@@ -43,44 +29,16 @@ class Repository @Inject constructor(
         )
 
 
-    private suspend fun getWeather(
+    override suspend fun getWeather(
         city: City
-    ): Weather? {
-        return try {
-            dataSource
-                .getWeather(
-                    latitude = city.latitude,
-                    longitude = city.longitude
-                ).apply {
-                    cityName = city.name
-                    countryCode = city.country
-                }
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-            null
-        }
-    }
-
-    override suspend fun getWeatherData(
-        countryCode: String,
-        limit: Int
-    ): Resource<List<Weather>> = coroutineScope {
-        if (utilityManager.isInternetAvailable())
-            try {
-                val list = getCities(countryCode, limit).map {
-                    async {
-                        getWeather(it)
-                    }
-                }.awaitAll().mapNotNull { it }.toList()
-
-                if (list.isEmpty())
-                    Resource.Error("This Country Has No Weather Data")
-                else
-                    Resource.Success(list)
-
-            } catch (exception: Exception) {
-                Resource.Error(utilityManager.handleException(exception))
+    ): Weather {
+        return dataSource
+            .getWeather(
+                latitude = city.latitude,
+                longitude = city.longitude
+            ).apply {
+                cityName = city.name
+                countryCode = city.country
             }
-        else Resource.Error("Please, check your internet connection")
     }
 }

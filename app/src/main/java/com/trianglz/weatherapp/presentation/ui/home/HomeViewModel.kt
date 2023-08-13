@@ -7,10 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
-import com.trianglz.weatherapp.data.repository.IRepository
+import com.trianglz.weatherapp.domain.usecases.countrysearch.ICountrySearchUseCase
+import com.trianglz.weatherapp.domain.usecases.getweatherdata.IWeatherDataUseCase
 import com.trianglz.weatherapp.domain.utils.resource.Resource
+import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchState
-import com.trianglz.weatherapp.presentation.ui.components.SearchBarStatus
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
@@ -26,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: IRepository
+    private val countrySearch: ICountrySearchUseCase,
+    private val weatherData: IWeatherDataUseCase
 ) : ViewModel() {
 
     private var _homeUIState: MutableStateFlow<UIState<List<Weather>>> =
@@ -72,7 +74,7 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun getCountries(countryName: String) {
         _searchResultState.value = UIState.Loading()
-        when (val countries = repository.getCountries(countryName = countryName)) {
+        when (val countries = countrySearch.getCountries(countryName = countryName)) {
             is Resource.Success -> _searchResultState.value = UIState.Success(countries.data)
             is Resource.Error -> _searchResultState.value = UIState.Failure(countries.message)
         }
@@ -82,7 +84,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
             currentCountry = country.name.common
-            when (val result = repository.getWeatherData(country.code, limit)) {
+            when (val result = weatherData.getWeatherData(country.code, limit)) {
                 is Resource.Success -> _homeUIState.value = UIState.Success(result.data)
                 is Resource.Error -> {
                     _homeUIState.value = UIState.Failure(result.message)

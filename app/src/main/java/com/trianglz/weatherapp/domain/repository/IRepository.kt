@@ -1,16 +1,21 @@
-package com.trianglz.weatherapp.data.repository
+package com.trianglz.weatherapp.domain.repository
 
+import com.trianglz.weatherapp.data.models.city.City
 import com.trianglz.weatherapp.data.models.country.Country
 import com.trianglz.weatherapp.data.models.weather.Weather
-import com.trianglz.weatherapp.domain.utils.resource.Resource
 
 interface IRepository {
     suspend fun getCountries(
         countryName: String
-    ): Resource<List<Country>>
+    ): List<Country>
 
-    suspend fun getWeatherData(
+    suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): Resource<List<Weather>>
+    ): List<City>
+
+    suspend fun getWeather(
+        city: City
+    ): Weather?
+
 }

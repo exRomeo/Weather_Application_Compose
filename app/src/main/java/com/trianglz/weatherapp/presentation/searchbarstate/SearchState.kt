@@ -3,12 +3,11 @@ package com.trianglz.weatherapp.presentation.searchbarstate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.trianglz.weatherapp.data.models.country.Country
-import com.trianglz.weatherapp.presentation.ui.components.SearchBarStatus
 
 data class SearchState(
     var placeHolder: String = "",
-    var noResultMessage: String = "",
     var status: SearchBarStatus = SearchBarStatus.Idle,
+    var noResultMessage: String = "",
     var result: List<Country> = emptyList(),
 )
 

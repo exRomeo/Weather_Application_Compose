@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.data.models.country.Country
+import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchState
 import com.trianglz.weatherapp.presentation.searchbarstate.rememberSearchState
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
@@ -132,7 +133,7 @@ fun WeatherSearchBar(
         elevation = CardDefaults.cardElevation(defaultElevation = animatedElevation),
         colors = CardDefaults.cardColors(containerColor = animateBackground)
     ) {
-        PurpleSearchBar(
+        TransparentSearchBar(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.small)
                 .onFocusChanged { state -> inFocus = state.isFocused },
@@ -180,8 +181,6 @@ fun WeatherSearchBar(
                     )
 
                 }
-
-
             },
             text = text,
             textStyle = MaterialTheme
@@ -201,7 +200,6 @@ fun WeatherSearchBar(
                     )
                 )
             },
-            shape = MaterialTheme.shapes.small,
             onTextChanged = onTextChanged
         )
         AnimatedVisibility(visible = inFocus) {
@@ -225,12 +223,12 @@ fun WeatherSearchBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PurpleSearchBar(
+fun TransparentSearchBar(
     modifier: Modifier = Modifier,
     text: String,
     placeHolder: (@Composable () -> Unit)? = null,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimaryContainer),
-    shape: CornerBasedShape,
+    shape: CornerBasedShape = MaterialTheme.shapes.small,
     singleLine: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     leadingIcon: (@Composable () -> Unit)? = null,
@@ -314,11 +312,6 @@ fun SearchResultsBox(
 }
 
 
-sealed class SearchBarStatus {
-    object Loading : SearchBarStatus()
-    object Error : SearchBarStatus()
-    object Idle : SearchBarStatus()
-}
 
 @Preview(showSystemUi = true, showBackground = true, device = "id:pixel_4")
 @Composable

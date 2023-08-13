@@ -2,8 +2,8 @@ package com.trianglz.weatherapp.di.modules
 
 import com.trianglz.weatherapp.data.remotesource.IRemoteDataSource
 import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
-import com.trianglz.weatherapp.data.repository.IRepository
 import com.trianglz.weatherapp.data.repository.Repository
+import com.trianglz.weatherapp.domain.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.IUtilityManager
 import com.trianglz.weatherapp.domain.utils.UtilityManager
 import com.trianglz.weatherapp.domain.utils.connection.ConnectionUtility
@@ -39,4 +39,5 @@ abstract class WeatherAppModule {
     @Binds
     @Singleton
     abstract fun bindUtilityManager(utilityManager: UtilityManager): IUtilityManager
+
 }

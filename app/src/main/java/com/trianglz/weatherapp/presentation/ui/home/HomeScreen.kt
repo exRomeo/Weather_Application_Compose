@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.domain.models.weather.Weather
 import com.trianglz.weatherapp.presentation.ui.components.LoadingScreen
 import com.trianglz.weatherapp.presentation.ui.components.MessageScreen
 import com.trianglz.weatherapp.presentation.ui.components.WeatherCard
@@ -81,7 +81,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
     ) { paddingValues ->
         val text by viewModel.searchTextState.collectAsState()
-        val searchState = viewModel.searchState
+        val searchState = viewModel.searchBarState
         val uiState by viewModel.homeUIState.collectAsState()
         Box(
             modifier = Modifier
@@ -91,7 +91,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
             WeatherSearchBar(
                 modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
-                searchState = searchState,
+                searchBarState = searchState,
                 onItemClicked = { viewModel.performAction(UIAction.ItemSelected(it)) },
                 onTextChanged = { newValue: String ->
                     viewModel.performAction(

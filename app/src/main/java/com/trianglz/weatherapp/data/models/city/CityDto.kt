@@ -2,7 +2,7 @@ package com.trianglz.weatherapp.data.models.city
 
 import com.google.gson.annotations.SerializedName
 
-data class City(
+data class CityDto(
     @field:SerializedName("name")
     val name: String,
     @field:SerializedName("country")

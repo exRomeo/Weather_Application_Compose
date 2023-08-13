@@ -1,8 +1,8 @@
 package com.trianglz.weatherapp.di.modules
 
 import com.trianglz.weatherapp.BuildConfig
-import com.trianglz.weatherapp.data.remotesource.apiservice.apininja.ApiNinja
-import com.trianglz.weatherapp.data.remotesource.apiservice.restcountries.RestCountriesAPI
+import com.trianglz.weatherapp.data.apiservice.apininja.ApiNinja
+import com.trianglz.weatherapp.data.apiservice.restcountries.RestCountriesAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

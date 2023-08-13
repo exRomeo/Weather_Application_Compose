@@ -1,8 +1,8 @@
 package com.trianglz.weatherapp.data.repository
 
-import com.trianglz.weatherapp.data.models.city.City
-import com.trianglz.weatherapp.data.models.country.Country
-import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.data.models.city.CityDto
+import com.trianglz.weatherapp.data.models.country.CountryDto
+import com.trianglz.weatherapp.data.models.weather.WeatherDto
 import com.trianglz.weatherapp.data.remotesource.IRemoteDataSource
 import com.trianglz.weatherapp.domain.repository.IRepository
 import javax.inject.Inject
@@ -13,7 +13,7 @@ class Repository @Inject constructor(
 
     override suspend fun getCountries(
         countryName: String
-    ): List<Country> =
+    ): List<CountryDto> =
         dataSource.getCountries(
             countryName = countryName
         )
@@ -22,7 +22,7 @@ class Repository @Inject constructor(
     override suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): List<City> =
+    ): List<CityDto> =
         dataSource.getCities(
             countryCode = countryCode,
             limit = limit
@@ -30,15 +30,12 @@ class Repository @Inject constructor(
 
 
     override suspend fun getWeather(
-        city: City
-    ): Weather {
+        city: CityDto
+    ): WeatherDto {
         return dataSource
             .getWeather(
                 latitude = city.latitude,
                 longitude = city.longitude
-            ).apply {
-                cityName = city.name
-                countryCode = city.country
-            }
+            )
     }
 }

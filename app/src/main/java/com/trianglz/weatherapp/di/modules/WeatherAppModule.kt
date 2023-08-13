@@ -6,8 +6,6 @@ import com.trianglz.weatherapp.data.repository.Repository
 import com.trianglz.weatherapp.domain.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.IUtilityManager
 import com.trianglz.weatherapp.domain.utils.UtilityManager
-import com.trianglz.weatherapp.domain.utils.connection.ConnectionUtility
-import com.trianglz.weatherapp.domain.utils.connection.IConnectionUtility
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.IExceptionHandler
 import dagger.Binds
@@ -28,9 +26,7 @@ abstract class WeatherAppModule {
     @Singleton
     abstract fun bindsRemoteDataSource(remoteDataSource: RemoteDataSource): IRemoteDataSource
 
-    @Binds
-    @Singleton
-    abstract fun provideUtilityManager(connectionUtility: ConnectionUtility):IConnectionUtility
+
 
     @Binds
     @Singleton

@@ -1,27 +1,27 @@
 package com.trianglz.weatherapp.data.remotesource
 
-import com.trianglz.weatherapp.data.models.city.City
-import com.trianglz.weatherapp.data.models.country.Country
-import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.data.models.city.CityDto
+import com.trianglz.weatherapp.data.models.country.CountryDto
+import com.trianglz.weatherapp.data.models.weather.WeatherDto
 
 interface IRemoteDataSource {
     suspend fun getCountries(
         countryName: String
-    ): List<Country>
+    ): List<CountryDto>
 
     suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): List<City>
+    ): List<CityDto>
 
     suspend fun getWeather(
         cityName: String,
         countryCode: String
-    ): Weather
+    ): WeatherDto
 
 
     suspend fun getWeather(
         latitude: Double,
         longitude: Double
-    ): Weather
+    ): WeatherDto
 }

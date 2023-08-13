@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.R
-import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.data.models.weather.WeatherDto
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.PurpleIndigoGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
@@ -151,7 +151,7 @@ fun WeatherListPreview() {
 
 
         listOf(
-            Weather(
+            WeatherDto(
                 cloudPercentage = 15,
                 currentTemperature = 300000000,
                 feelsLike = 55,
@@ -163,7 +163,7 @@ fun WeatherListPreview() {
                 sunrise = 562165165163,
                 sunset = 315656565656
             ),
-            Weather(
+            WeatherDto(
                 cloudPercentage = 15,
                 currentTemperature = 30,
                 feelsLike = 55,
@@ -175,7 +175,7 @@ fun WeatherListPreview() {
                 sunrise = 562165165163,
                 sunset = 315656565656
             ),
-            Weather(
+            WeatherDto(
                 cloudPercentage = 15,
                 currentTemperature = 30,
                 feelsLike = 55,
@@ -187,7 +187,7 @@ fun WeatherListPreview() {
                 sunrise = 562165165163,
                 sunset = 315656565656
             ),
-            Weather(
+            WeatherDto(
                 cloudPercentage = 15,
                 currentTemperature = 30,
                 feelsLike = 55,
@@ -199,7 +199,7 @@ fun WeatherListPreview() {
                 sunrise = 562165165163,
                 sunset = 315656565656
             ),
-            Weather(
+            WeatherDto(
                 cloudPercentage = 15,
                 currentTemperature = 30,
                 feelsLike = 55,

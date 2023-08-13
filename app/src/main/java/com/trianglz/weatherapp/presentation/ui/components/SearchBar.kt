@@ -57,9 +57,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.trianglz.weatherapp.data.models.country.Country
+import com.trianglz.weatherapp.domain.models.country.Country
+import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
-import com.trianglz.weatherapp.presentation.searchbarstate.SearchState
 import com.trianglz.weatherapp.presentation.searchbarstate.rememberSearchState
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
@@ -70,7 +70,7 @@ import com.trianglz.weatherapp.presentation.ui.theme.lavender
 @Composable
 fun WeatherSearchBar(
     modifier: Modifier = Modifier,
-    searchState: SearchState = rememberSearchState(),
+    searchBarState: SearchBarState = rememberSearchState(),
     text: String = "",
     onTextChanged: (String) -> Unit = {},
     onCloseClicked: () -> Unit = { },
@@ -79,10 +79,10 @@ fun WeatherSearchBar(
     WeatherSearchBar(
         modifier = modifier,
         text = text,
-        placeHolder = searchState.placeHolder,
-        noResultPlaceHolder = searchState.noResultMessage,
-        status = searchState.status,
-        results = searchState.result,
+        placeHolder = searchBarState.placeHolder,
+        noResultPlaceHolder = searchBarState.noResultMessage,
+        status = searchBarState.status,
+        results = searchBarState.result,
         onTextChanged = onTextChanged,
         onCloseClicked = onCloseClicked,
         onResultClicked = onItemClicked
@@ -281,7 +281,7 @@ fun SearchResultsBox(
                     modifier = Modifier
                         .padding(horizontal = 48.dp)
                         .fillMaxWidth(),
-                    text = country.name.common,
+                    text = country.name,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )

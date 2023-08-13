@@ -1,6 +1,8 @@
 package com.trianglz.weatherapp.domain.usecases.getweatherdata
 
-import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.data.mappers.weather.toWeather
+import com.trianglz.weatherapp.data.models.city.CityDto
+import com.trianglz.weatherapp.domain.models.weather.Weather
 import com.trianglz.weatherapp.domain.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.IUtilityManager
 import com.trianglz.weatherapp.domain.utils.resource.Resource
@@ -18,11 +20,10 @@ class WeatherDataUseCase @Inject constructor(
         countryCode: String,
         limit: Int
     ): Resource<List<Weather>> = coroutineScope {
-        if (utilityManager.isInternetAvailable())
             try {
                 val list = repository.getCities(countryCode, limit).map {
                     async {
-                        repository.getWeather(it)
+                        getWeather(it)
                     }
                 }.awaitAll().mapNotNull { it }.toList()
 
@@ -34,6 +35,8 @@ class WeatherDataUseCase @Inject constructor(
             } catch (exception: Exception) {
                 Resource.Error(utilityManager.handleException(exception))
             }
-        else Resource.Error("Please, check your internet connection")
     }
+
+    private suspend fun getWeather(city: CityDto): Weather =
+        repository.getWeather(city).toWeather(city)
 }

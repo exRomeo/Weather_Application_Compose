@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trianglz.weatherapp.data.models.country.Country
-import com.trianglz.weatherapp.data.models.weather.Weather
+import com.trianglz.weatherapp.domain.models.country.Country
+import com.trianglz.weatherapp.domain.models.weather.Weather
 import com.trianglz.weatherapp.domain.usecases.countrysearch.ICountrySearchUseCase
 import com.trianglz.weatherapp.domain.usecases.getweatherdata.IWeatherDataUseCase
 import com.trianglz.weatherapp.domain.utils.resource.Resource
+import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
-import com.trianglz.weatherapp.presentation.searchbarstate.SearchState
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
@@ -41,9 +41,8 @@ class HomeViewModel @Inject constructor(
         get() = _searchTextState
 
 
-    var searchState by mutableStateOf(SearchState())
+    var searchBarState by mutableStateOf(SearchBarState(placeHolder = "Search For a Country..."))
         private set
-    private var currentCountry: String = "Search For a Country..."
 
     private var _uiEvents: MutableSharedFlow<UIEvent> = MutableSharedFlow()
     val uiEvents: SharedFlow<UIEvent>
@@ -52,8 +51,7 @@ class HomeViewModel @Inject constructor(
     private fun updateSearchTextState(newValue: String) {
         _searchTextState.value = newValue
         if (newValue.isBlank())
-            searchState = searchState.copy(
-                placeHolder = currentCountry,
+            searchBarState = searchBarState.copy(
                 status = SearchBarStatus.Idle,
                 noResultMessage = "",
                 result = emptyList()
@@ -72,28 +70,29 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun getCountries(countryName: String) {
-        searchState =
-            searchState.copy(
+        searchBarState =
+            searchBarState.copy(
                 status = SearchBarStatus.Loading
             )
-        searchState = when (val countries = countrySearch.getCountries(countryName = countryName)) {
-            is Resource.Success -> searchState.copy(
-                status = SearchBarStatus.Idle,
-                result = countries.data
-            )
+        searchBarState =
+            when (val countries = countrySearch.getCountries(countryName = countryName)) {
+                is Resource.Success -> searchBarState.copy(
+                    status = SearchBarStatus.Idle,
+                    result = countries.data
+                )
 
-            is Resource.Error -> searchState.copy(
-                status = SearchBarStatus.Error,
-                noResultMessage = countries.message,
-                result = emptyList()
-            )
-        }
+                is Resource.Error -> searchBarState.copy(
+                    status = SearchBarStatus.Error,
+                    noResultMessage = countries.message,
+                    result = emptyList()
+                )
+            }
     }
 
     private fun getWeatherData(country: Country, limit: Int) {
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
-            currentCountry = country.name.common
+            searchBarState = searchBarState.copy(placeHolder = country.name)
             when (val result = weatherData.getWeatherData(country.code, limit)) {
                 is Resource.Success -> _homeUIState.value = UIState.Success(result.data)
                 is Resource.Error -> {

@@ -5,7 +5,6 @@ import com.trianglz.weatherapp.data.models.city.CityDto
 import com.trianglz.weatherapp.domain.models.weather.Weather
 import com.trianglz.weatherapp.domain.repository.IRepository
 import com.trianglz.weatherapp.domain.utils.IUtilityManager
-import com.trianglz.weatherapp.domain.utils.resource.Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -19,21 +18,21 @@ class WeatherDataUseCase @Inject constructor(
     override suspend fun getWeatherData(
         countryCode: String,
         limit: Int
-    ): Resource<List<Weather>> = coroutineScope {
+    ): Result<List<Weather>> = coroutineScope {
             try {
                 val list = repository.getCities(countryCode, limit).map {
                     async {
                         getWeather(it)
                     }
-                }.awaitAll().mapNotNull { it }.toList()
+                }.awaitAll().map { it }.toList()
 
                 if (list.isEmpty())
-                    Resource.Error("This Country Has No Weather Data")
+                    Result.failure(Exception("This Country Has No Weather Data"))
                 else
-                    Resource.Success(list)
+                    Result.success(list)
 
             } catch (exception: Exception) {
-                Resource.Error(utilityManager.handleException(exception))
+                Result.failure(Exception(utilityManager.handleException(exception)))
             }
     }
 

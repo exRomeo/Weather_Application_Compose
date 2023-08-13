@@ -9,7 +9,6 @@ import com.trianglz.weatherapp.domain.models.country.Country
 import com.trianglz.weatherapp.domain.models.weather.Weather
 import com.trianglz.weatherapp.domain.usecases.countrysearch.ICountrySearchUseCase
 import com.trianglz.weatherapp.domain.usecases.getweatherdata.IWeatherDataUseCase
-import com.trianglz.weatherapp.domain.utils.resource.Resource
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
@@ -74,16 +73,17 @@ class HomeViewModel @Inject constructor(
             searchBarState.copy(
                 status = SearchBarStatus.Loading
             )
+        val countries = countrySearch.getCountries(countryName = countryName)
         searchBarState =
-            when (val countries = countrySearch.getCountries(countryName = countryName)) {
-                is Resource.Success -> searchBarState.copy(
+            if (countries.isSuccess) {
+                searchBarState.copy(
                     status = SearchBarStatus.Idle,
-                    result = countries.data
+                    result = countries.getOrDefault(emptyList())
                 )
-
-                is Resource.Error -> searchBarState.copy(
+            } else {
+                searchBarState.copy(
                     status = SearchBarStatus.Error,
-                    noResultMessage = countries.message,
+                    noResultMessage = countries.exceptionOrNull()?.message ?: "Something went wrong!, please try again later",
                     result = emptyList()
                 )
             }
@@ -93,14 +93,15 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
             searchBarState = searchBarState.copy(placeHolder = country.name)
-            when (val result = weatherData.getWeatherData(country.code, limit)) {
-                is Resource.Success -> _homeUIState.value = UIState.Success(result.data)
-                is Resource.Error -> {
-                    _homeUIState.value = UIState.Failure(result.message)
-                    _uiEvents.emit(UIEvent.Message(result.message))
-                }
+            val result = weatherData.getWeatherData(country.code, limit)
+            if (result.isSuccess) {
+                _homeUIState.value = UIState.Success(result.getOrDefault(emptyList()))
+            } else {
+                _homeUIState.value = UIState.Failure(result.exceptionOrNull()?.message ?: "Something went wrong!, please try again later")
+                _uiEvents.emit(UIEvent.Message(result.exceptionOrNull()?.message ?: "Something went wrong!, please try again later"))
             }
         }
+
     }
 
 

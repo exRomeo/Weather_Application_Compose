@@ -41,12 +41,6 @@ class HomeViewModel @Inject constructor(
         get() = _searchTextState
 
 
-    private var _searchResultState: MutableStateFlow<UIState<List<Country>>> =
-        MutableStateFlow(UIState.Idle())
-    private val searchResultState: StateFlow<UIState<List<Country>>>
-        get() = _searchResultState
-
-
     var searchState by mutableStateOf(SearchState())
         private set
     private var currentCountry: String = "Search For a Country..."
@@ -58,7 +52,12 @@ class HomeViewModel @Inject constructor(
     private fun updateSearchTextState(newValue: String) {
         _searchTextState.value = newValue
         if (newValue.isBlank())
-            _searchResultState.value = UIState.Idle()
+            searchState = searchState.copy(
+                placeHolder = currentCountry,
+                status = SearchBarStatus.Idle,
+                noResultMessage = "",
+                result = emptyList()
+            )
     }
 
     private fun observeSearchTextState() {
@@ -73,10 +72,21 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun getCountries(countryName: String) {
-        _searchResultState.value = UIState.Loading()
-        when (val countries = countrySearch.getCountries(countryName = countryName)) {
-            is Resource.Success -> _searchResultState.value = UIState.Success(countries.data)
-            is Resource.Error -> _searchResultState.value = UIState.Failure(countries.message)
+        searchState =
+            searchState.copy(
+                status = SearchBarStatus.Loading
+            )
+        searchState = when (val countries = countrySearch.getCountries(countryName = countryName)) {
+            is Resource.Success -> searchState.copy(
+                status = SearchBarStatus.Idle,
+                result = countries.data
+            )
+
+            is Resource.Error -> searchState.copy(
+                status = SearchBarStatus.Error,
+                noResultMessage = countries.message,
+                result = emptyList()
+            )
         }
     }
 
@@ -105,50 +115,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    private fun observeSearchResultState() {
-        viewModelScope.launch {
-            searchResultState.collect {
-                when (it) {
-
-                    is UIState.Idle -> {
-                        searchState = searchState.copy(
-                            placeHolder = currentCountry,
-                            status = SearchBarStatus.Idle,
-                            noResultMessage = "",
-                            result = emptyList()
-                        )
-                    }
-
-                    is UIState.Loading -> {
-                        searchState =
-                            searchState.copy(
-                                status = SearchBarStatus.Loading
-                            )
-                    }
-
-                    is UIState.Success -> {
-                        searchState =
-                            searchState.copy(
-                                status = SearchBarStatus.Idle,
-                                result = it.list
-                            )
-                    }
-
-                    is UIState.Failure -> {
-                        searchState =
-                            searchState.copy(
-                                status = SearchBarStatus.Error,
-                                noResultMessage = it.message,
-                                result = emptyList()
-                            )
-                    }
-                }
-            }
-        }
-    }
-
     init {
         observeSearchTextState()
-        observeSearchResultState()
     }
 }

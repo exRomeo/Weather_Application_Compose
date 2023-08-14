@@ -1,14 +1,13 @@
 package com.trianglz.weatherapp.presentation.ui.theme
 
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.platform.LocalContext
 
 private val ColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
@@ -45,17 +44,14 @@ private val ColorScheme = darkColorScheme(
 
 @Composable
 fun WeatherAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val view = LocalView.current
-    if (!view.isInEditMode) {
+    val context = LocalContext.current
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = ColorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            val window = (context as Activity).window
+            window.statusBarColor = Color.Transparent.toArgb()
         }
-    }
+
 
     MaterialTheme(
         shapes = shapes,

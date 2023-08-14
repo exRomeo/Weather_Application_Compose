@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import com.trianglz.weatherapp.presentation.ui.mainscreen.WeatherApp
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
@@ -18,6 +19,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+       WindowCompat.setDecorFitsSystemWindows(window,
+            false)
+
         setContent {
             WeatherAppTheme {
                 WeatherApp(modifier = Modifier.background(BackgroundGradient))

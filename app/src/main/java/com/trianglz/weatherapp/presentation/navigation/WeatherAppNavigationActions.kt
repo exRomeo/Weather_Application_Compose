@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
 class WeatherAppNavigationActions(navController: NavController) {
+
     val navigateToHome: () -> Unit = {
         navController.navigate(Destinations.Home.route) {
             popUpTo(navController.graph.findStartDestination().id) {

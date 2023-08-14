@@ -1,6 +1,7 @@
 package com.trianglz.weatherapp.presentation.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,8 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +45,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
     val viewModel: HomeViewModel = hiltViewModel()
     val snackbarHostState = remember { SnackbarHostState() }
     EventProcessor(snackbarHostState = snackbarHostState, uiEvents = viewModel.uiEvents)
@@ -59,7 +60,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
                     Icon(
-                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        modifier = Modifier.clickable { openDrawer() },
+                        imageVector = Icons.Rounded.Menu,
                         contentDescription = null,
                     )
                 },

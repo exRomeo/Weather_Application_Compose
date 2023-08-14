@@ -4,11 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.trianglz.weatherapp.presentation.ui.home.HomeScreen
+import com.trianglz.weatherapp.presentation.ui.mainscreen.WeatherApp
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,9 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WeatherAppTheme {
-                HomeScreen(
-                    modifier = Modifier.background(BackgroundGradient)
-                )
+                WeatherApp(modifier = Modifier.background(BackgroundGradient))
             }
         }
     }
@@ -33,8 +30,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     WeatherAppTheme {
-        Column(modifier = Modifier.background(BackgroundGradient)) {
-            HomeScreen()
-        }
+        WeatherApp(modifier = Modifier.background(BackgroundGradient))
     }
 }

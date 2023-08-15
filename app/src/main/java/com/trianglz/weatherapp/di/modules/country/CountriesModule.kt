@@ -1,10 +1,12 @@
-package com.trianglz.weatherapp.di.modules
+package com.trianglz.weatherapp.di.modules.country
 
 import com.trianglz.weatherapp.data.apiservice.restcountries.RestCountriesAPI
-import com.trianglz.weatherapp.data.repository.CountriesRepositoryImpl
-import com.trianglz.weatherapp.domain.repository.CountriesRepository
-import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCase
-import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCaseImpl
+import com.trianglz.weatherapp.data.remotesource.country.CountriesRemoteSource
+import com.trianglz.weatherapp.data.remotesource.country.CountriesRemoteSourceImpl
+import com.trianglz.weatherapp.data.repository.country.CountriesRepositoryImpl
+import com.trianglz.weatherapp.domain.repository.country.CountriesRepository
+import com.trianglz.weatherapp.domain.usecases.countrysearch.FetchCountriesUseCase
+import com.trianglz.weatherapp.domain.usecases.countrysearch.FetchCountriesUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -38,15 +40,21 @@ abstract class CountriesModule {
 
     @Binds
     @Singleton
+    abstract fun bindsCountriesRemoteSource(
+        countriesRemoteSourceImpl: CountriesRemoteSourceImpl
+    ): CountriesRemoteSource
+
+    @Binds
+    @Singleton
     abstract fun bindsCountriesRepository(
         countriesRepositoryImpl: CountriesRepositoryImpl
     ): CountriesRepository
 
     @Binds
     @Singleton
-    abstract fun bindCountrySearchUseCase(
-        countrySearchUseCase: CountrySearchUseCaseImpl
-    ): CountrySearchUseCase
+    abstract fun bindFetchCountriesUseCase(
+        fetchCountriesUseCaseImpl: FetchCountriesUseCaseImpl
+    ): FetchCountriesUseCase
 
 
 }

@@ -1,8 +1,6 @@
-package com.trianglz.weatherapp.di.modules
+package com.trianglz.weatherapp.di.modules.app
 
 import com.trianglz.weatherapp.BuildConfig
-import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
-import com.trianglz.weatherapp.data.remotesource.RemoteSourceImpl
 import com.trianglz.weatherapp.domain.utils.UtilityManager
 import com.trianglz.weatherapp.domain.utils.UtilityManagerImpl
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
@@ -27,11 +25,6 @@ abstract class AppModule {
             return BuildConfig.APIKEY
         }
     }
-
-
-    @Binds
-    @Singleton
-    abstract fun bindsRemoteDataSource(remoteSourceImpl: RemoteSourceImpl): RemoteDataSource
 
     @Binds
     @Singleton

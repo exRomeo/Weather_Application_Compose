@@ -1,12 +1,12 @@
-package com.trianglz.weatherapp.data.repository
+package com.trianglz.weatherapp.data.repository.country
 
 import com.trianglz.weatherapp.data.models.country.CountryDataModel
-import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
-import com.trianglz.weatherapp.domain.repository.CountriesRepository
+import com.trianglz.weatherapp.data.remotesource.country.CountriesRemoteSource
+import com.trianglz.weatherapp.domain.repository.country.CountriesRepository
 import javax.inject.Inject
 
 class CountriesRepositoryImpl @Inject constructor(
-    private val dataSource: RemoteDataSource
+    private val dataSource: CountriesRemoteSource
 ) : CountriesRepository {
 
     override suspend fun getCountries(

@@ -1,9 +1,8 @@
-package com.trianglz.weatherapp.domain.repository
+package com.trianglz.weatherapp.domain.usecases.fetchcities
 
 import com.trianglz.weatherapp.data.models.city.CityDataModel
 
-interface CitiesRepository {
-
+interface FetchCitiesUseCase {
     suspend fun getCities(
         countryCode: String,
         limit: Int

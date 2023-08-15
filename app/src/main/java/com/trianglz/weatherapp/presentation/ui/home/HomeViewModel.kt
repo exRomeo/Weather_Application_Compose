@@ -7,14 +7,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
 import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
-import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCase
-import com.trianglz.weatherapp.domain.usecases.getweatherdata.WeatherDataUseCase
+import com.trianglz.weatherapp.domain.usecases.countrysearch.FetchCountriesUseCase
+import com.trianglz.weatherapp.domain.usecases.fetchcities.FetchCitiesUseCase
+import com.trianglz.weatherapp.domain.usecases.fetchweather.FetchWeatherUseCase
+import com.trianglz.weatherapp.domain.utils.UtilityManager
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +31,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val countrySearch: CountrySearchUseCase,
-    private val weatherData: WeatherDataUseCase
+    private val fetchCountries: FetchCountriesUseCase,
+    private val fetchCities: FetchCitiesUseCase,
+    private val fetchWeather: FetchWeatherUseCase,
+    private val utilityManager: UtilityManager
 ) : ViewModel() {
 
     private var _homeUIState: MutableStateFlow<UIState<List<WeatherDomainModel>>> =
@@ -73,7 +80,7 @@ class HomeViewModel @Inject constructor(
             searchBarState.copy(
                 status = SearchBarStatus.Loading
             )
-        val countries = countrySearch.getCountries(countryName = countryName)
+        val countries = fetchCountries.getCountries(countryName = countryName)
         searchBarState =
             if (countries.isSuccess) {
                 searchBarState.copy(
@@ -83,7 +90,8 @@ class HomeViewModel @Inject constructor(
             } else {
                 searchBarState.copy(
                     status = SearchBarStatus.Error,
-                    noResultMessage = countries.exceptionOrNull()?.message ?: "Something went wrong!, please try again later",
+                    noResultMessage = countries.exceptionOrNull()?.message
+                        ?: "Something went wrong!, please try again later",
                     result = emptyList()
                 )
             }
@@ -93,15 +101,43 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
             searchBarState = searchBarState.copy(placeHolder = country.name)
-            val result = weatherData.getWeatherData(country.code, limit)
+            val result = getWeatherData(country.code, limit)
             if (result.isSuccess) {
                 _homeUIState.value = UIState.Success(result.getOrDefault(emptyList()))
             } else {
-                _homeUIState.value = UIState.Failure(result.exceptionOrNull()?.message ?: "Something went wrong!, please try again later")
-                _uiEvents.emit(UIEvent.Message(result.exceptionOrNull()?.message ?: "Something went wrong!, please try again later"))
+                _homeUIState.value = UIState.Failure(
+                    result.exceptionOrNull()?.message
+                        ?: "Something went wrong!, please try again later"
+                )
+                _uiEvents.emit(
+                    UIEvent.Message(
+                        result.exceptionOrNull()?.message
+                            ?: "Something went wrong!, please try again later"
+                    )
+                )
             }
         }
+    }
 
+    private suspend fun getWeatherData(
+        countryCode: String,
+        limit: Int
+    ): Result<List<WeatherDomainModel>> = coroutineScope {
+        try {
+            val list = fetchCities.getCities(countryCode, limit).map {
+                async {
+                    fetchWeather.getWeather(it)
+                }
+            }.awaitAll().map { it.getOrNull() }.mapNotNull { it }.toList()
+
+            if (list.isEmpty())
+                Result.failure(Exception("This Country Has No Weather Data"))
+            else
+                Result.success(list)
+
+        } catch (exception: Exception) {
+            Result.failure(Exception(utilityManager.handleException(exception)))
+        }
     }
 
 

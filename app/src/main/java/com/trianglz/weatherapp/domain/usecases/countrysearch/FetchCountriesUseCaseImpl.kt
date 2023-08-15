@@ -2,16 +2,16 @@ package com.trianglz.weatherapp.domain.usecases.countrysearch
 
 import com.trianglz.weatherapp.data.mappers.country.toDomainModel
 import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
-import com.trianglz.weatherapp.domain.repository.CountriesRepository
+import com.trianglz.weatherapp.domain.repository.country.CountriesRepository
 import com.trianglz.weatherapp.domain.utils.UtilityManager
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 
-class CountrySearchUseCaseImpl @Inject constructor(
+class FetchCountriesUseCaseImpl @Inject constructor(
     private val repository: CountriesRepository,
     private val utilityManager: UtilityManager
-) : CountrySearchUseCase {
+) : FetchCountriesUseCase {
     override suspend fun getCountries(
         countryName: String
     ): Result<List<CountryDomainModel>> = coroutineScope {

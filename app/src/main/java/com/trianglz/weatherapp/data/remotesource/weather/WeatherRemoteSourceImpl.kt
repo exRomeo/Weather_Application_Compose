@@ -1,31 +1,15 @@
-package com.trianglz.weatherapp.data.remotesource
+package com.trianglz.weatherapp.data.remotesource.weather
 
 import com.trianglz.weatherapp.data.apiservice.apininja.ApiNinja
-import com.trianglz.weatherapp.data.apiservice.restcountries.RestCountriesAPI
-import com.trianglz.weatherapp.data.models.city.CityDataModel
-import com.trianglz.weatherapp.data.models.country.CountryDataModel
 import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
 import javax.inject.Inject
 import javax.inject.Named
 
-class RemoteSourceImpl @Inject constructor(
+class WeatherRemoteSourceImpl @Inject constructor(
     @Named("ApiKey")
     private val apiKey: String,
-    private val apiNinja: ApiNinja,
-    private val restCountriesAPI: RestCountriesAPI
-) :
-    RemoteDataSource {
-
-
-    override suspend fun getCities(
-        countryCode: String,
-        limit: Int
-    ): List<CityDataModel> =
-        apiNinja.getCities(
-            apiKey = apiKey,
-            countryCode = countryCode,
-            limit = limit
-        )
+    private val apiNinja: ApiNinja
+): WeatherRemoteSource {
 
     override suspend fun getWeather(
         cityName: String,
@@ -46,5 +30,4 @@ class RemoteSourceImpl @Inject constructor(
             latitude = latitude,
             longitude = longitude
         )
-
 }

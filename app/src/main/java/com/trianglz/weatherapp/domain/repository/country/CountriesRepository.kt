@@ -1,4 +1,4 @@
-package com.trianglz.weatherapp.domain.repository
+package com.trianglz.weatherapp.domain.repository.country
 
 import com.trianglz.weatherapp.data.models.country.CountryDataModel
 

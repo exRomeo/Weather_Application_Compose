@@ -1,5 +1,6 @@
 package com.trianglz.weatherapp.di.modules
 
+import com.trianglz.weatherapp.BuildConfig
 import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
 import com.trianglz.weatherapp.data.remotesource.RemoteSourceImpl
 import com.trianglz.weatherapp.data.repository.RepositoryImpl
@@ -10,13 +11,25 @@ import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandlerImpl
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class WeatherAppModule {
+abstract class AppModule {
+
+    companion object{
+        @Provides
+        @Named("ApiKey")
+        @Singleton
+        fun provideApiKey(): String {
+            return BuildConfig.APIKEY
+        }
+    }
+
 
     @Binds
     @Singleton

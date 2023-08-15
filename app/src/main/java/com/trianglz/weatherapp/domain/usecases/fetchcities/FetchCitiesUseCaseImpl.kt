@@ -11,6 +11,9 @@ class FetchCitiesUseCaseImpl @Inject constructor(
     override suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): List<CityDataModel> =
-        citiesRepository.getCities(countryCode, limit)
+    ): Result<List<CityDataModel>> =
+        runCatching {
+            citiesRepository
+                .getCities(countryCode, limit)
+        }
 }

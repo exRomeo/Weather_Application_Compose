@@ -6,5 +6,5 @@ interface FetchCitiesUseCase {
     suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): List<CityDataModel>
+    ): Result<List<CityDataModel>>
 }

@@ -12,7 +12,7 @@ class FetchWeatherUseCaseImpl @Inject constructor(
     override suspend fun getWeather(
         city: CityDataModel
     ): Result<WeatherDomainModel> =
-        kotlin.runCatching {
+        runCatching {
             weatherRepository
                 .getWeather(city)
                 .toDomainModel(city)

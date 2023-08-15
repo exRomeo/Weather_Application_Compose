@@ -1,4 +1,4 @@
-package com.trianglz.weatherapp.presentation.ui.components
+package com.trianglz.weatherapp.presentation.extensions
 
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.Modifier

@@ -31,14 +31,12 @@ fun SlantShapeTest(modifier: Modifier = Modifier) {
                 style = Fill
             )
         })
-
 }
 
 
 @Preview(device = "id:pixel_4", showSystemUi = true, showBackground = true)
 @Composable
 fun SlantShapePreview() {
-
 
     Column(Modifier.padding(8.dp)) {
         SlantShapeTest(Modifier.padding(8.dp))
@@ -122,5 +120,4 @@ class SlantShape(
             path = getSlantPath(size, cornerRadius, leftSideHeightPercentage)
         )
     }
-
 }

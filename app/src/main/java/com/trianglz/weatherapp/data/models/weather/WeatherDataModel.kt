@@ -2,7 +2,7 @@ package com.trianglz.weatherapp.data.models.weather
 
 import com.google.gson.annotations.SerializedName
 
-class WeatherDto(
+class WeatherDataModel(
     @field:SerializedName("cloud_pct")
     val cloudPercentage: Int,
     @field:SerializedName("temp")

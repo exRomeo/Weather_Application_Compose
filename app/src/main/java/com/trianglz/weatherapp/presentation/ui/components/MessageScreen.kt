@@ -23,10 +23,12 @@ fun MessageScreen(modifier: Modifier = Modifier, message: String) {
         Text(
             modifier = Modifier.fillMaxWidth(0.9f),
             text = message,
-            style = MaterialTheme.typography.headlineSmall.copy(color = lavender, textAlign = TextAlign.Center)
+            style = MaterialTheme.typography.headlineSmall.copy(
+                color = lavender,
+                textAlign = TextAlign.Center
+            )
         )
     }
-
 }
 
 @Preview

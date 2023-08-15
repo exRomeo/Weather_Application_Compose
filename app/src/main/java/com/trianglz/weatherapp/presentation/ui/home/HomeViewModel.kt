@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trianglz.weatherapp.domain.models.country.Country
-import com.trianglz.weatherapp.domain.models.weather.Weather
-import com.trianglz.weatherapp.domain.usecases.countrysearch.ICountrySearchUseCase
-import com.trianglz.weatherapp.domain.usecases.getweatherdata.IWeatherDataUseCase
+import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
+import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
+import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCase
+import com.trianglz.weatherapp.domain.usecases.getweatherdata.WeatherDataUseCase
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
@@ -26,13 +26,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val countrySearch: ICountrySearchUseCase,
-    private val weatherData: IWeatherDataUseCase
+    private val countrySearch: CountrySearchUseCase,
+    private val weatherData: WeatherDataUseCase
 ) : ViewModel() {
 
-    private var _homeUIState: MutableStateFlow<UIState<List<Weather>>> =
+    private var _homeUIState: MutableStateFlow<UIState<List<WeatherDomainModel>>> =
         MutableStateFlow(UIState.Idle())
-    val homeUIState: StateFlow<UIState<List<Weather>>>
+    val homeUIState: StateFlow<UIState<List<WeatherDomainModel>>>
         get() = _homeUIState
 
     private var _searchTextState: MutableStateFlow<String> = MutableStateFlow("")
@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
             }
     }
 
-    private fun getWeatherData(country: Country, limit: Int) {
+    private fun getWeatherData(country: CountryDomainModel, limit: Int) {
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
             searchBarState = searchBarState.copy(placeHolder = country.name)
@@ -105,7 +105,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun performAction(action: UIAction<Country>) {
+    fun performAction(action: UIAction<CountryDomainModel>) {
         when (action) {
 
             is UIAction.SearchTextChanged -> updateSearchTextState(action.text)

@@ -1,13 +1,13 @@
 package com.trianglz.weatherapp.di.modules
 
-import com.trianglz.weatherapp.data.remotesource.IRemoteDataSource
 import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
-import com.trianglz.weatherapp.data.repository.Repository
-import com.trianglz.weatherapp.domain.repository.IRepository
-import com.trianglz.weatherapp.domain.utils.IUtilityManager
+import com.trianglz.weatherapp.data.remotesource.RemoteSourceImpl
+import com.trianglz.weatherapp.data.repository.RepositoryImpl
+import com.trianglz.weatherapp.domain.repository.Repository
 import com.trianglz.weatherapp.domain.utils.UtilityManager
+import com.trianglz.weatherapp.domain.utils.UtilityManagerImpl
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
-import com.trianglz.weatherapp.domain.utils.exceptionhandler.IExceptionHandler
+import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandlerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -20,20 +20,18 @@ abstract class WeatherAppModule {
 
     @Binds
     @Singleton
-    abstract fun bindsRepository(repository: Repository): IRepository
+    abstract fun bindsRepository(repository: RepositoryImpl): Repository
 
     @Binds
     @Singleton
-    abstract fun bindsRemoteDataSource(remoteDataSource: RemoteDataSource): IRemoteDataSource
-
-
+    abstract fun bindsRemoteDataSource(remoteSourceImpl: RemoteSourceImpl): RemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindsExceptionHandler(exceptionHandler: ExceptionHandler): IExceptionHandler
+    abstract fun bindsExceptionHandler(exceptionHandler: ExceptionHandlerImpl): ExceptionHandler
 
     @Binds
     @Singleton
-    abstract fun bindUtilityManager(utilityManager: UtilityManager): IUtilityManager
+    abstract fun bindUtilityManager(utilityManager: UtilityManagerImpl): UtilityManager
 
 }

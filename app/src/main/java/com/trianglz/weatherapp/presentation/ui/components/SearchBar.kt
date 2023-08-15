@@ -57,7 +57,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.trianglz.weatherapp.domain.models.country.Country
+import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
+import com.trianglz.weatherapp.presentation.extensions.maxHeightScreenRatio
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
 import com.trianglz.weatherapp.presentation.searchbarstate.rememberSearchState
@@ -74,7 +75,7 @@ fun WeatherSearchBar(
     text: String = "",
     onTextChanged: (String) -> Unit = {},
     onCloseClicked: () -> Unit = { },
-    onItemClicked: (Country) -> Unit = {}
+    onItemClicked: (CountryDomainModel) -> Unit = {}
 ) {
     WeatherSearchBar(
         modifier = modifier,
@@ -97,8 +98,8 @@ fun WeatherSearchBar(
     text: String = "",
     onCloseClicked: () -> Unit = {},
     noResultPlaceHolder: String = "",
-    results: List<Country> = listOf(),
-    onResultClicked: (Country) -> Unit = {},
+    results: List<CountryDomainModel> = listOf(),
+    onResultClicked: (CountryDomainModel) -> Unit = {},
     onTextChanged: (String) -> Unit = {}
 ) {
 
@@ -261,9 +262,9 @@ fun TransparentSearchBar(
 @Composable
 fun SearchResultsBox(
     modifier: Modifier = Modifier,
-    countries: List<Country>,
+    countries: List<CountryDomainModel>,
     noResultPlaceHolder: String,
-    onResultClicked: (Country) -> Unit = {}
+    onResultClicked: (CountryDomainModel) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier

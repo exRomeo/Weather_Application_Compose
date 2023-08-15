@@ -1,9 +1,9 @@
 package com.trianglz.weatherapp.di.modules
 
 import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCase
-import com.trianglz.weatherapp.domain.usecases.countrysearch.ICountrySearchUseCase
-import com.trianglz.weatherapp.domain.usecases.getweatherdata.IWeatherDataUseCase
+import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCaseImpl
 import com.trianglz.weatherapp.domain.usecases.getweatherdata.WeatherDataUseCase
+import com.trianglz.weatherapp.domain.usecases.getweatherdata.WeatherDataUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,9 +16,9 @@ abstract class UseCaseModule {
 
     @Binds
     @Singleton
-    abstract fun bindCountrySearchUseCase(countrySearchUseCase: CountrySearchUseCase): ICountrySearchUseCase
+    abstract fun bindCountrySearchUseCase(countrySearchUseCase: CountrySearchUseCaseImpl): CountrySearchUseCase
 
     @Binds
     @Singleton
-    abstract fun bindWeatherDataUseCAse(weatherDataUseCase: WeatherDataUseCase): IWeatherDataUseCase
+    abstract fun bindWeatherDataUseCAse(weatherDataUseCase: WeatherDataUseCaseImpl): WeatherDataUseCase
 }

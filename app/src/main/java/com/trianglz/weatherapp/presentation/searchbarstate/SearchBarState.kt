@@ -2,13 +2,13 @@ package com.trianglz.weatherapp.presentation.searchbarstate
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.trianglz.weatherapp.domain.models.country.Country
+import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
 
 data class SearchBarState(
     val placeHolder: String = "",
     val status: SearchBarStatus = SearchBarStatus.Idle,
     val noResultMessage: String = "",
-    val result: List<Country> = emptyList(),
+    val result: List<CountryDomainModel> = emptyList(),
 )
 
 
@@ -24,7 +24,7 @@ fun rememberSearchState(
     placeHolder: String = "",
     noResultMessage: String = "",
     status: SearchBarStatus = SearchBarStatus.Idle,
-    result: List<Country> = emptyList(),
+    result: List<CountryDomainModel> = emptyList(),
 
     ) = remember(
     placeHolder,

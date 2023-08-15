@@ -1,10 +1,10 @@
-package com.trianglz.weatherapp.data.remotesource
+package com.trianglz.weatherapp.domain.repository
 
 import com.trianglz.weatherapp.data.models.city.CityDataModel
 import com.trianglz.weatherapp.data.models.country.CountryDataModel
 import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
 
-interface RemoteDataSource {
+interface Repository {
     suspend fun getCountries(
         countryName: String
     ): List<CountryDataModel>
@@ -15,12 +15,7 @@ interface RemoteDataSource {
     ): List<CityDataModel>
 
     suspend fun getWeather(
-        cityName: String,
-        countryCode: String
+        city: CityDataModel
     ): WeatherDataModel
 
-    suspend fun getWeather(
-        latitude: Double,
-        longitude: Double
-    ): WeatherDataModel
 }

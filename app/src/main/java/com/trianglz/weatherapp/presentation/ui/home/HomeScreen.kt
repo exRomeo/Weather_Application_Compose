@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.trianglz.weatherapp.domain.models.weather.Weather
+import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 import com.trianglz.weatherapp.presentation.ui.components.LoadingScreen
 import com.trianglz.weatherapp.presentation.ui.components.MessageScreen
 import com.trianglz.weatherapp.presentation.ui.components.WeatherCard
@@ -41,6 +41,8 @@ import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
+import com.trianglz.weatherapp.presentation.extensions.getWeatherDescription
+import com.trianglz.weatherapp.presentation.extensions.getWeatherIcon
 import kotlinx.coroutines.flow.SharedFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,7 +111,7 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
 }
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<Weather>>) {
+fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<WeatherDomainModel>>) {
     when (uiState) {
         is UIState.Idle -> MessageScreen(
             modifier = modifier,
@@ -128,7 +130,7 @@ fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<Weath
 @Composable
 fun WeatherDataList(
     modifier: Modifier = Modifier,
-    weatherData: List<Weather>
+    weatherData: List<WeatherDomainModel>
 ) {
     LazyColumn(
         modifier = modifier,

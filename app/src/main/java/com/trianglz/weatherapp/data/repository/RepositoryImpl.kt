@@ -1,19 +1,19 @@
 package com.trianglz.weatherapp.data.repository
 
-import com.trianglz.weatherapp.data.models.city.CityDto
-import com.trianglz.weatherapp.data.models.country.CountryDto
-import com.trianglz.weatherapp.data.models.weather.WeatherDto
-import com.trianglz.weatherapp.data.remotesource.IRemoteDataSource
-import com.trianglz.weatherapp.domain.repository.IRepository
+import com.trianglz.weatherapp.data.models.city.CityDataModel
+import com.trianglz.weatherapp.data.models.country.CountryDataModel
+import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
+import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
+import com.trianglz.weatherapp.domain.repository.Repository
 import javax.inject.Inject
 
-class Repository @Inject constructor(
-    private val dataSource: IRemoteDataSource
-) : IRepository {
+class RepositoryImpl @Inject constructor(
+    private val dataSource: RemoteDataSource
+) : Repository {
 
     override suspend fun getCountries(
         countryName: String
-    ): List<CountryDto> =
+    ): List<CountryDataModel> =
         dataSource.getCountries(
             countryName = countryName
         )
@@ -22,7 +22,7 @@ class Repository @Inject constructor(
     override suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): List<CityDto> =
+    ): List<CityDataModel> =
         dataSource.getCities(
             countryCode = countryCode,
             limit = limit
@@ -30,8 +30,8 @@ class Repository @Inject constructor(
 
 
     override suspend fun getWeather(
-        city: CityDto
-    ): WeatherDto {
+        city: CityDataModel
+    ): WeatherDataModel {
         return dataSource
             .getWeather(
                 latitude = city.latitude,

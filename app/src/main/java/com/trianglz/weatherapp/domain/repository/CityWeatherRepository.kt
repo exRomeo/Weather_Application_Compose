@@ -1,13 +1,9 @@
 package com.trianglz.weatherapp.domain.repository
 
 import com.trianglz.weatherapp.data.models.city.CityDataModel
-import com.trianglz.weatherapp.data.models.country.CountryDataModel
 import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
 
-interface Repository {
-    suspend fun getCountries(
-        countryName: String
-    ): List<CountryDataModel>
+interface CityWeatherRepository {
 
     suspend fun getCities(
         countryCode: String,
@@ -17,5 +13,4 @@ interface Repository {
     suspend fun getWeather(
         city: CityDataModel
     ): WeatherDataModel
-
 }

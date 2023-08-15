@@ -3,8 +3,6 @@ package com.trianglz.weatherapp.di.modules
 import com.trianglz.weatherapp.BuildConfig
 import com.trianglz.weatherapp.data.remotesource.RemoteDataSource
 import com.trianglz.weatherapp.data.remotesource.RemoteSourceImpl
-import com.trianglz.weatherapp.data.repository.RepositoryImpl
-import com.trianglz.weatherapp.domain.repository.Repository
 import com.trianglz.weatherapp.domain.utils.UtilityManager
 import com.trianglz.weatherapp.domain.utils.UtilityManagerImpl
 import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
@@ -30,10 +28,6 @@ abstract class AppModule {
         }
     }
 
-
-    @Binds
-    @Singleton
-    abstract fun bindsRepository(repository: RepositoryImpl): Repository
 
     @Binds
     @Singleton

@@ -1,8 +1,8 @@
 package com.trianglz.weatherapp.di.modules
 
 import com.trianglz.weatherapp.data.apiservice.apininja.ApiNinja
-import com.trianglz.weatherapp.domain.usecases.getweatherdata.WeatherDataUseCase
-import com.trianglz.weatherapp.domain.usecases.getweatherdata.WeatherDataUseCaseImpl
+import com.trianglz.weatherapp.data.repository.WeatherRepositoryImpl
+import com.trianglz.weatherapp.domain.repository.WeatherRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class WeatherModule {
 
-    companion object{
+    companion object {
         @Provides
         @Singleton
         fun provideApiNinja(): ApiNinja {
@@ -35,5 +35,8 @@ abstract class WeatherModule {
 
     @Binds
     @Singleton
-    abstract fun bindWeatherDataUseCAse(weatherDataUseCase: WeatherDataUseCaseImpl): WeatherDataUseCase
+    abstract fun bindsWeatherRepository(
+        weatherRepositoryImpl: WeatherRepositoryImpl
+    ): WeatherRepository
+
 }

@@ -16,12 +16,6 @@ class RemoteSourceImpl @Inject constructor(
 ) :
     RemoteDataSource {
 
-    override suspend fun getCountries(
-        countryName: String
-    ): List<CountryDataModel> =
-        restCountriesAPI.getCountries(
-            countryName = countryName
-        )
 
     override suspend fun getCities(
         countryCode: String,

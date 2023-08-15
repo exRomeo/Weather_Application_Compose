@@ -1,6 +1,8 @@
 package com.trianglz.weatherapp.di.modules
 
 import com.trianglz.weatherapp.data.apiservice.restcountries.RestCountriesAPI
+import com.trianglz.weatherapp.data.repository.CountriesRepositoryImpl
+import com.trianglz.weatherapp.domain.repository.CountriesRepository
 import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCase
 import com.trianglz.weatherapp.domain.usecases.countrysearch.CountrySearchUseCaseImpl
 import dagger.Binds
@@ -33,9 +35,18 @@ abstract class CountriesModule {
         }
     }
 
+
     @Binds
     @Singleton
-    abstract fun bindCountrySearchUseCase(countrySearchUseCase: CountrySearchUseCaseImpl): CountrySearchUseCase
+    abstract fun bindsCountriesRepository(
+        countriesRepositoryImpl: CountriesRepositoryImpl
+    ): CountriesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCountrySearchUseCase(
+        countrySearchUseCase: CountrySearchUseCaseImpl
+    ): CountrySearchUseCase
 
 
 }

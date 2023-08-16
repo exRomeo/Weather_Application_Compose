@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
+import com.trianglz.weatherapp.presentation.extensions.getWeatherDescription
+import com.trianglz.weatherapp.presentation.extensions.getWeatherIcon
 import com.trianglz.weatherapp.presentation.ui.components.LoadingScreen
 import com.trianglz.weatherapp.presentation.ui.components.MessageScreen
 import com.trianglz.weatherapp.presentation.ui.components.WeatherCard
@@ -41,8 +43,6 @@ import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
-import com.trianglz.weatherapp.presentation.extensions.getWeatherDescription
-import com.trianglz.weatherapp.presentation.extensions.getWeatherIcon
 import kotlinx.coroutines.flow.SharedFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,8 +96,15 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
             WeatherSearchBar(
                 modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
                 searchBarState = searchState,
-                onItemClicked = { viewModel.performAction(UIAction.ItemSelected(it)) },
-                onTextChanged = { newValue: String ->
+                onItemClicked = { country ->
+                    viewModel.performAction(
+                        UIAction.ItemSelected(
+                            country,
+                            5
+                        )
+                    )
+                },
+                onTextChanged = { newValue ->
                     viewModel.performAction(
                         UIAction.SearchTextChanged(
                             newValue
@@ -137,14 +144,14 @@ fun WeatherDataList(
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = spacedBy(20.dp)
     ) {
-        items(weatherData) {
+        items(weatherData) { weather ->
             WeatherCard(
-                currentTemperature = it.currentTemperature,
-                highTemperature = it.highTemperature,
-                lowTemperature = it.lowTemperature,
-                location = "${it.cityName}, ${it.countryCode}",
-                description = it.getWeatherDescription(),
-                icon = it.getWeatherIcon()
+                currentTemperature = weather.currentTemperature,
+                highTemperature = weather.highTemperature,
+                lowTemperature = weather.lowTemperature,
+                location = "${weather.cityName}, ${weather.countryCode}",
+                description = weather.getWeatherDescription(),
+                icon = weather.getWeatherIcon()
             )
         }
     }
@@ -153,10 +160,10 @@ fun WeatherDataList(
 @Composable
 fun EventProcessor(snackbarHostState: SnackbarHostState, uiEvents: SharedFlow<UIEvent>) {
     LaunchedEffect(Unit) {
-        uiEvents.collect {
-            when (it) {
+        uiEvents.collect { uiEvent ->
+            when (uiEvent) {
                 is UIEvent.Message -> snackbarHostState.showSnackbar(
-                    message = it.value,
+                    message = uiEvent.message,
                     duration = SnackbarDuration.Long
                 )
             }

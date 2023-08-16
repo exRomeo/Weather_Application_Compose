@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.trianglz.weatherapp.data.models.city.CityDataModel
 import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
 import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 import com.trianglz.weatherapp.domain.usecases.countrysearch.FetchCountriesUseCase
@@ -101,45 +102,36 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
             searchBarState = searchBarState.copy(placeHolder = country.name)
-            val result = getWeatherData(country.code, limit)
-
-            result
-                .onSuccess { weatherList ->
-                    if (weatherList.isEmpty())
-                        _homeUIState.value = UIState.Failure("This Country Has No Weather Data")
-                    else
-                        _homeUIState.value = UIState.Success(weatherList)
-                }
-                .onFailure {
-                    _homeUIState.value = UIState.Failure(
-                        exceptionHandler.handleException(it)
-                    )
-                    _uiEvents.emit(
-                        UIEvent.Message(
-                            exceptionHandler.handleException(it)
-                        )
-                    )
-                }
+            val cityList = fetchCities.getCities(country.code, limit)
+            cityList.onSuccess { cities ->
+                if (cities.isEmpty())
+                    _homeUIState.value =
+                        UIState.Failure("Found no Cities for this country in the database!")
+                else
+                    getWeather(cities)
+            }.onFailure {
+                _homeUIState.value = UIState.Failure(exceptionHandler.handleException(it))
+            }
         }
     }
 
-    private suspend fun getWeatherData(
-        countryCode: String,
-        limit: Int
-    ): Result<List<WeatherDomainModel>> = coroutineScope {
-        val result = fetchCities.getCities(countryCode, limit)
-
-        val list = result
-            .getOrElse { return@coroutineScope Result.failure(it) }
-            .map {
+    private suspend fun getWeather(
+        cityList: List<CityDataModel>
+    ) = coroutineScope {
+        val weatherResult =
+            cityList.map { city ->
                 async {
-                    fetchWeather.getWeather(it)
+                    fetchWeather.getWeather(city)
                 }
             }.awaitAll()
-            .map { it.getOrNull() }
-            .mapNotNull { it }
 
-        Result.success(list)
+        val list = weatherResult.mapNotNull { result -> result.getOrNull() }
+
+        if (list.isEmpty())
+            _homeUIState.value = UIState.Failure("Found no weather data for this Country in the database!")
+        else
+            _homeUIState.value = UIState.Success(list)
+
     }
 
     fun performAction(action: UIAction<CountryDomainModel>) {

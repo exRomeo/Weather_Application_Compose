@@ -9,17 +9,7 @@ class WeatherRemoteSourceImpl @Inject constructor(
     @Named("ApiKey")
     private val apiKey: String,
     private val apiNinja: ApiNinja
-): WeatherRemoteSource {
-
-    override suspend fun getWeather(
-        cityName: String,
-        countryCode: String
-    ): WeatherDataModel =
-        apiNinja.getWeather(
-            apiKey = apiKey,
-            cityName = cityName,
-            countryCode = countryCode
-        )
+) : WeatherRemoteSource {
 
     override suspend fun getWeather(
         latitude: Double,

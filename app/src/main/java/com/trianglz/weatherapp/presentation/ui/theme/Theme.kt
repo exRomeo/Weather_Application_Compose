@@ -47,10 +47,10 @@ fun WeatherAppTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
-        SideEffect {
-            val window = (context as Activity).window
-            window.statusBarColor = Color.Transparent.toArgb()
-        }
+    SideEffect {
+        val window = (context as Activity).window
+        window.statusBarColor = Color.Transparent.toArgb()
+    }
 
 
     MaterialTheme(

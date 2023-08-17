@@ -4,6 +4,12 @@ import com.trianglz.weatherapp.R
 import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 import kotlin.random.Random
 
+/**
+ * due to lack of details about the weather data coming from the api
+ * created [getWeatherDescription] to return description based on the current temperature
+ * and [getWeatherIcon] to return a random icon to display on the weather card
+ * */
+
 fun WeatherDomainModel.getWeatherDescription(): String = when {
     currentTemperature >= 30.0 -> "Hot."
     currentTemperature >= 20.0 -> "Warm."

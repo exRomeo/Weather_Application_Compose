@@ -20,16 +20,19 @@ fun WeatherAppNavGraph(
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {}
 ) {
+    
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = Destinations.Home.route
     ) {
+
         composable(
             route = Destinations.Home.route
         ) {
             HomeScreen(modifier, openDrawer)
         }
+
         composable(
             route = Destinations.ScreenTwo.route
         ) {

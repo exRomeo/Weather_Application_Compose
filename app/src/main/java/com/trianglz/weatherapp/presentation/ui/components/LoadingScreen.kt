@@ -14,6 +14,9 @@ import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.darkPurple
 
+/**
+ * [LoadingScreen] a screen with a [CircularProgressIndicator] in the middle
+ * */
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {

@@ -4,10 +4,9 @@ import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
 
 interface WeatherRemoteSource {
 
-    suspend fun getWeather(
-        cityName: String,
-        countryCode: String
-    ): WeatherDataModel
+    /**
+     * [getWeather] fetches the weather data from the api by specifying the city's [longitude] and [latitude]
+     * */
 
     suspend fun getWeather(
         latitude: Double,

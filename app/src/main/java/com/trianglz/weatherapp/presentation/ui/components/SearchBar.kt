@@ -68,6 +68,10 @@ import com.trianglz.weatherapp.presentation.ui.theme.darkPurple
 import com.trianglz.weatherapp.presentation.ui.theme.lavender
 
 
+/**
+ * [WeatherSearchBar] created as an overload wrapper to its other version to make controlling its state easier
+ * */
+
 @Composable
 fun WeatherSearchBar(
     modifier: Modifier = Modifier,
@@ -89,6 +93,12 @@ fun WeatherSearchBar(
         onResultClicked = onItemClicked
     )
 }
+
+/**
+ * [WeatherSearchBar] is a custom component that has a search bar and a hidden lazy column
+ * that expands\appears in 2 cases either when showing a list of results or when showing the user an error message
+ * @param status represent the current status which is one of 3 [SearchBarStatus.Idle], [SearchBarStatus.Error] and [SearchBarStatus.Loading]
+ * */
 
 @Composable
 fun WeatherSearchBar(
@@ -221,6 +231,9 @@ fun WeatherSearchBar(
     }
 }
 
+/**
+ * [TransparentSearchBar] is a [BasicTextField] without a background customized to look like a search bar
+ * */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -259,6 +272,13 @@ fun TransparentSearchBar(
         })
 }
 
+
+/**
+ * [SearchResultsBox] is just a transparent [Column] that shows the received country list or an error message
+ * @param countries represents the country list
+ * @param noResultPlaceHolder represents the error message
+ * @param onResultClicked is a call back to handle what happens when the user clicks on a country
+ * */
 @Composable
 fun SearchResultsBox(
     modifier: Modifier = Modifier,
@@ -311,7 +331,6 @@ fun SearchResultsBox(
 
     }
 }
-
 
 
 @Preview(showSystemUi = true, showBackground = true, device = "id:pixel_4")

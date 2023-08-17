@@ -4,6 +4,12 @@ import com.trianglz.weatherapp.data.models.city.CityDataModel
 import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 
 interface FetchWeatherUseCase {
+
+    /**
+     * [getWeather] just calls the method from the repository and wraps it in [runCatching] block
+     * which returns one of two case success with the received data or failure with the Exception
+     * */
+
     suspend fun getWeather(
         city: CityDataModel
     ): Result<WeatherDomainModel>

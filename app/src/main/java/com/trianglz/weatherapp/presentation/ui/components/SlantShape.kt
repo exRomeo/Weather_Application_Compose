@@ -37,10 +37,8 @@ fun SlantShapeTest(modifier: Modifier = Modifier) {
 @Preview(device = "id:pixel_4", showSystemUi = true, showBackground = true)
 @Composable
 fun SlantShapePreview() {
-
     Column(Modifier.padding(8.dp)) {
         SlantShapeTest(Modifier.padding(8.dp))
-
     }
 }
 
@@ -48,9 +46,12 @@ fun SlantShapePreview() {
 fun getSlantPath(
     size: Size,
     cornerRadius: Float,
-    leftSideHeightPercentage: Float
+    rightToLeftSideRatio: Float
 ): Path {
+
     val path = Path()
+
+    //top left arc
     path.arcTo(
         rect = Rect(
             offset =
@@ -67,7 +68,7 @@ fun getSlantPath(
         rect = Rect(
             offset = Offset(
                 size.width - cornerRadius,
-                (size.height - cornerRadius) * leftSideHeightPercentage
+                (size.height - cornerRadius) * rightToLeftSideRatio
             ),
             size = Size(cornerRadius, cornerRadius)
         ),
@@ -109,7 +110,7 @@ fun getSlantPath(
 
 class SlantShape(
     private val cornerRadius: Float = 50f,
-    private val leftSideHeightPercentage: Float = 0.625f
+    private val rightToLeftSideRatio: Float = 0.625f
 ) : Shape {
     override fun createOutline(
         size: Size,
@@ -117,7 +118,7 @@ class SlantShape(
         density: Density
     ): Outline {
         return Outline.Generic(
-            path = getSlantPath(size, cornerRadius, leftSideHeightPercentage)
+            path = getSlantPath(size, cornerRadius, rightToLeftSideRatio)
         )
     }
 }

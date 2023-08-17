@@ -38,23 +38,46 @@ class HomeViewModel @Inject constructor(
     private val exceptionHandler: ExceptionHandler
 ) : ViewModel() {
 
+    /**
+     * [homeUIState] represents the state of the section below the search bar
+     * */
+
     private var _homeUIState: MutableStateFlow<UIState<List<WeatherDomainModel>>> =
         MutableStateFlow(UIState.Idle())
     val homeUIState: StateFlow<UIState<List<WeatherDomainModel>>>
         get() = _homeUIState
+
+
+    /**
+     * [searchTextState] represents the state of the search query
+     * */
 
     private var _searchTextState: MutableStateFlow<String> = MutableStateFlow("")
     val searchTextState: StateFlow<String>
         get() = _searchTextState
 
 
+    /**
+     * [searchBarState] represents the state of the search bar
+     * */
+
     var searchBarState by mutableStateOf(SearchBarState(placeHolder = "Search For a Country..."))
         private set
+
+
+    /**
+     * [uiEvents] is responsible for emitting ui events such as error messages
+     * */
 
     private var _uiEvents: MutableSharedFlow<UIEvent> = MutableSharedFlow()
     val uiEvents: SharedFlow<UIEvent>
         get() = _uiEvents
 
+
+    /**
+     * [updateSearchTextState] responsible for updating [searchTextState]
+     * and sets the search bar state to idle with empty result list when the search text is blank
+     * */
     private fun updateSearchTextState(newValue: String) {
         _searchTextState.value = newValue
         if (newValue.isBlank())
@@ -64,6 +87,13 @@ class HomeViewModel @Inject constructor(
                 result = emptyList()
             )
     }
+
+
+    /**
+     * [observeSearchTextState] responsible for observing [searchTextState]
+     * and invokes [getCountries] according to each new query while having delays between each search attempt
+     * to avoid unnecessary search attempts while the user is still typing
+     * */
 
     private fun observeSearchTextState() {
         viewModelScope.launch {
@@ -75,6 +105,12 @@ class HomeViewModel @Inject constructor(
                 }
         }
     }
+
+
+    /**
+     * [getCountries] responsible for getting a list of countries that match the query string [countryName]
+     * and sets the [searchBarState] according to the success or failure case of the search attempt
+     * */
 
     private suspend fun getCountries(countryName: String) {
         searchBarState =
@@ -98,6 +134,15 @@ class HomeViewModel @Inject constructor(
             }
     }
 
+
+    /**
+     * [getWeatherData] responsible for getting the weather data for a number represented by [limit] of cities
+     * and in case of success it checks
+     * if the list is empty and sets the ui state to failure with a message
+     * if the list has cities it calls [getWeather] and hands it the list of cities
+     * in case of failure it sets the ui state to failure with a message explaining the issue to the user
+     * */
+
     private fun getWeatherData(country: CountryDomainModel, limit: Int) {
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
@@ -115,6 +160,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
+    /**
+     * [getWeather] responsible for getting and displaying the weather on the ui
+     * so it creates a list of "Deferred" types that wraps the calls to [getWeather] and awaits the results
+     * then it maps all the results to either weather in case of success or null in case of failure
+     * then checks if the list is empty it sets the ui state to failure with message explaining that no weather data is found
+     * if the list has data it sets the ui state to success and displays the weather data
+     * */
+
     private suspend fun getWeather(
         cityList: List<CityDataModel>
     ) = coroutineScope {
@@ -128,11 +182,19 @@ class HomeViewModel @Inject constructor(
         val list = weatherResult.mapNotNull { result -> result.getOrNull() }
 
         if (list.isEmpty())
-            _homeUIState.value = UIState.Failure("Found no weather data for this Country in the database!")
+            _homeUIState.value =
+                UIState.Failure("Found no weather data for this Country in the database!")
         else
             _homeUIState.value = UIState.Success(list)
 
     }
+
+    /**
+     * [performAction] is a function with one purpose and it is to unify the way that the ui talks to the viewModel
+     * using a sealed class with possible actions to be sent from the view to the view model through this function
+     * and this function's responsibility is as its name suggests
+     * to perform that action
+     * */
 
     fun performAction(action: UIAction<CountryDomainModel>) {
         when (action) {
@@ -143,6 +205,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
+    /**
+     * Required to activate the search functionality
+     * */
     init {
         observeSearchTextState()
     }

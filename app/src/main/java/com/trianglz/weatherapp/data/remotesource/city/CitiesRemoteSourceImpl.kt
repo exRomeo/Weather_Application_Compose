@@ -5,6 +5,7 @@ import com.trianglz.weatherapp.data.models.city.CityDataModel
 import javax.inject.Inject
 import javax.inject.Named
 
+
 class CitiesRemoteSourceImpl @Inject constructor(
     @Named("ApiKey")
     private val apiKey: String,

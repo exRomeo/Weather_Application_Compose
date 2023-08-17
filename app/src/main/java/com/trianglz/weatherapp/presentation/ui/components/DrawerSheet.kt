@@ -24,7 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.presentation.navigation.Destinations
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
-
+/**
+ * @param currentRoute represents the route of the currently previewed screen
+ * @param navigateToHome is a call back to be implemented at the callers sight to manage navigation to home screen
+ * @param navigateToScreenTwo is a call back to be implemented at the callers sight to manage navigation to the second screen
+ * @param closeDrawer is a call back to be implemented at the callers sight to manage the sheet's retracting
+ * */
 @Composable
 fun WeatherNavDrawerSheet(
     currentRoute: String,

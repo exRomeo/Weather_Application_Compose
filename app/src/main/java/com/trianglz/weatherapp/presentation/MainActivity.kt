@@ -20,8 +20,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-       WindowCompat.setDecorFitsSystemWindows(window,
-            false)
+        /**
+         * [WindowCompat.setDecorFitsSystemWindows] set to false so the background expands behind the system's status bar
+         * also need to set
+         * val window = (context as Activity).window
+         * window.statusBarColor = Color.Transparent.toArgb()
+         * in [WeatherAppTheme] and
+         * android:windowSoftInputMode="adjustResize
+         * in the manifest -> activity
+         * */
+
+
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
 
         setContent {
             WeatherAppTheme {

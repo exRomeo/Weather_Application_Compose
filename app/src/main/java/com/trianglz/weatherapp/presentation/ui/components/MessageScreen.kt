@@ -14,6 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.lavender
 
+/**
+ * [MessageScreen] a screen with a message to the user in the middle
+ * @param message represents the Message
+ * */
+
 @Composable
 fun MessageScreen(modifier: Modifier = Modifier, message: String) {
     Box(

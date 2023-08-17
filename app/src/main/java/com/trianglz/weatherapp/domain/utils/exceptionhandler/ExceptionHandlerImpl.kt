@@ -13,6 +13,10 @@ class ExceptionHandlerImpl @Inject constructor() : ExceptionHandler {
         else -> "An error occurred. Please try again later."
     }
 
+    /**
+     * [handleHttpException] as its name suggest was created specifically for [HttpException] codes
+     * and translated http codes to a message the user can understand
+     * */
     private fun handleHttpException(exception: HttpException): String = when (exception.code()) {
         400 -> "Bad request. Please check your input and try again. if the problem persists check your Api Key."
         401 -> "Unauthorized. Please check your Api Key"

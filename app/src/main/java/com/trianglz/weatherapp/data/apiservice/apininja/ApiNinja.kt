@@ -15,12 +15,6 @@ interface ApiNinja {
         @Query("limit") limit: Int
     ): List<CityDataModel>
 
-    @GET("weather/")
-    suspend fun getWeather(
-        @Header("X-Api-Key") apiKey: String,
-        @Query("city") cityName: String,
-        @Query("country") countryCode: String
-    ): WeatherDataModel
 
     @GET("weather/")
     suspend fun getWeather(
@@ -28,6 +22,5 @@ interface ApiNinja {
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double
     ): WeatherDataModel
-
 
 }

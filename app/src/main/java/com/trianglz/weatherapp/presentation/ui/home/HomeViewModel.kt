@@ -11,7 +11,7 @@ import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 import com.trianglz.weatherapp.domain.usecases.countrysearch.FetchCountriesUseCase
 import com.trianglz.weatherapp.domain.usecases.fetchcities.FetchCitiesUseCase
 import com.trianglz.weatherapp.domain.usecases.fetchweather.FetchWeatherUseCase
-import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
+import com.trianglz.weatherapp.presentation.exceptionresolver.ExceptionResolver
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
 import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
     private val fetchCountries: FetchCountriesUseCase,
     private val fetchCities: FetchCitiesUseCase,
     private val fetchWeather: FetchWeatherUseCase,
-    private val exceptionHandler: ExceptionHandler
+    private val exceptionResolver: ExceptionResolver
 ) : ViewModel() {
 
     /**
@@ -78,6 +78,7 @@ class HomeViewModel @Inject constructor(
      * [updateSearchTextState] responsible for updating [searchTextState]
      * and sets the search bar state to idle with empty result list when the search text is blank
      * */
+
     private fun updateSearchTextState(newValue: String) {
         _searchTextState.value = newValue
         if (newValue.isBlank())
@@ -128,7 +129,7 @@ class HomeViewModel @Inject constructor(
             }.onFailure {
                 searchBarState = searchBarState.copy(
                     status = SearchBarStatus.Error,
-                    noResultMessage = exceptionHandler.handleException(it),
+                    noResultMessage = exceptionResolver.resolve(it),
                     result = emptyList()
                 )
             }
@@ -155,7 +156,7 @@ class HomeViewModel @Inject constructor(
                 else
                     getWeather(cities)
             }.onFailure {
-                _homeUIState.value = UIState.Failure(exceptionHandler.handleException(it))
+                _homeUIState.value = UIState.Failure(exceptionResolver.resolve(it))
             }
         }
     }

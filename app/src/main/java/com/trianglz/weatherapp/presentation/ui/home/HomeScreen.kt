@@ -144,7 +144,7 @@ fun WeatherDataList(
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = spacedBy(20.dp)
     ) {
-        items(weatherData) { weather ->
+        items(weatherData, key = { it.hashCode() }) { weather ->
             WeatherCard(
                 currentTemperature = weather.currentTemperature,
                 highTemperature = weather.highTemperature,

@@ -1,8 +1,10 @@
 package com.trianglz.weatherapp.di.modules.app
 
+import android.app.Application
+import android.content.res.Resources
 import com.trianglz.weatherapp.BuildConfig
-import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandler
-import com.trianglz.weatherapp.domain.utils.exceptionhandler.ExceptionHandlerImpl
+import com.trianglz.weatherapp.presentation.exceptionresolver.ExceptionResolver
+import com.trianglz.weatherapp.presentation.exceptionresolver.ExceptionResolverImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -14,6 +16,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AppModule {
+
     /**
      * [provideApiKey] gets the "ApiKey" hidden in "local.properties" file
      * if you are facing problems with the api please get your own api key from the [official site](https://api-ninjas.com/api/city)
@@ -30,10 +33,17 @@ abstract class AppModule {
         fun provideApiKey(): String {
             return BuildConfig.APIKEY
         }
+
+        @Provides
+        @Singleton
+        fun provideResourceManager(
+            application: Application
+        ): Resources =
+            application.resources
     }
+
 
     @Binds
     @Singleton
-    abstract fun bindsExceptionHandler(exceptionHandler: ExceptionHandlerImpl): ExceptionHandler
-
+    abstract fun bindsExceptionResolver(exceptionResolver: ExceptionResolverImpl): ExceptionResolver
 }

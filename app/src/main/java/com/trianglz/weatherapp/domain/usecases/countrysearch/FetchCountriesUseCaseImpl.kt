@@ -1,6 +1,5 @@
 package com.trianglz.weatherapp.domain.usecases.countrysearch
 
-import com.trianglz.weatherapp.data.mappers.country.toDomainModel
 import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
 import com.trianglz.weatherapp.domain.repository.country.CountriesRepository
 import kotlinx.coroutines.coroutineScope
@@ -16,7 +15,7 @@ class FetchCountriesUseCaseImpl @Inject constructor(
         runCatching {
             repository.getCountries(
                 countryName = countryName
-            ).map { it.toDomainModel() }
+            )
         }
     }
 }

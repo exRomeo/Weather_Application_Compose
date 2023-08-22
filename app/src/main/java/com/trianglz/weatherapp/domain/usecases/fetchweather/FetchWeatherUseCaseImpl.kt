@@ -1,6 +1,5 @@
 package com.trianglz.weatherapp.domain.usecases.fetchweather
 
-import com.trianglz.weatherapp.data.mappers.weather.toDomainModel
 import com.trianglz.weatherapp.data.models.city.CityDataModel
 import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 import com.trianglz.weatherapp.domain.repository.weather.WeatherRepository
@@ -15,6 +14,5 @@ class FetchWeatherUseCaseImpl @Inject constructor(
         runCatching {
             weatherRepository
                 .getWeather(city)
-                .toDomainModel(city)
         }
 }

@@ -1,4 +1,4 @@
-package com.trianglz.weatherapp.presentation.searchbarstate
+package com.trianglz.weatherapp.presentation.models.searchbar
 
 sealed class SearchBarStatus {
     object Loading : SearchBarStatus()

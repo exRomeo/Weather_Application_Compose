@@ -6,14 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trianglz.weatherapp.data.models.city.CityDataModel
-import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
-import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 import com.trianglz.weatherapp.domain.usecases.countrysearch.FetchCountriesUseCase
 import com.trianglz.weatherapp.domain.usecases.fetchcities.FetchCitiesUseCase
 import com.trianglz.weatherapp.domain.usecases.fetchweather.FetchWeatherUseCase
 import com.trianglz.weatherapp.presentation.exceptionresolver.ExceptionResolver
-import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
-import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
+import com.trianglz.weatherapp.presentation.mappers.country.toUiModel
+import com.trianglz.weatherapp.presentation.mappers.weather.toUiModel
+import com.trianglz.weatherapp.presentation.models.country.CountryUiModel
+import com.trianglz.weatherapp.presentation.models.searchbar.SearchBarState
+import com.trianglz.weatherapp.presentation.models.searchbar.SearchBarStatus
+import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
 import com.trianglz.weatherapp.presentation.viewcontract.UIState
@@ -42,9 +44,9 @@ class HomeViewModel @Inject constructor(
      * [homeUIState] represents the state of the section below the search bar
      * */
 
-    private var _homeUIState: MutableStateFlow<UIState<List<WeatherDomainModel>>> =
+    private var _homeUIState: MutableStateFlow<UIState<List<WeatherUiModel>>> =
         MutableStateFlow(UIState.Idle())
-    val homeUIState: StateFlow<UIState<List<WeatherDomainModel>>>
+    val homeUIState: StateFlow<UIState<List<WeatherUiModel>>>
         get() = _homeUIState
 
 
@@ -64,6 +66,8 @@ class HomeViewModel @Inject constructor(
     var searchBarState by mutableStateOf(SearchBarState(placeHolder = "Search For a Country..."))
         private set
 
+    var resultState by mutableStateOf(emptyList<CountryUiModel>())
+        private set
 
     /**
      * [uiEvents] is responsible for emitting ui events such as error messages
@@ -81,12 +85,13 @@ class HomeViewModel @Inject constructor(
 
     private fun updateSearchTextState(newValue: String) {
         _searchTextState.value = newValue
-        if (newValue.isBlank())
+        if (newValue.isBlank()) {
             searchBarState = searchBarState.copy(
                 status = SearchBarStatus.Idle,
-                noResultMessage = "",
-                result = emptyList()
+                noResultMessage = ""
             )
+            resultState = emptyList()
+        }
     }
 
 
@@ -121,17 +126,19 @@ class HomeViewModel @Inject constructor(
         val countries = fetchCountries.getCountries(countryName = countryName)
 
         countries
-            .onSuccess {
+            .onSuccess { resultList ->
                 searchBarState = searchBarState.copy(
-                    status = SearchBarStatus.Idle,
-                    result = it
+                    status = SearchBarStatus.Idle
                 )
+                resultState = resultList.map { it.toUiModel() }
+
             }.onFailure {
                 searchBarState = searchBarState.copy(
                     status = SearchBarStatus.Error,
-                    noResultMessage = exceptionResolver.resolve(it),
-                    result = emptyList()
+                    noResultMessage = exceptionResolver.resolve(it)
                 )
+                resultState = emptyList()
+
             }
     }
 
@@ -144,7 +151,7 @@ class HomeViewModel @Inject constructor(
      * in case of failure it sets the ui state to failure with a message explaining the issue to the user
      * */
 
-    private fun getWeatherData(country: CountryDomainModel, limit: Int) {
+    private fun getWeatherData(country: CountryUiModel, limit: Int) {
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
             searchBarState = searchBarState.copy(placeHolder = country.name)
@@ -173,6 +180,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun getWeather(
         cityList: List<CityDataModel>
     ) = coroutineScope {
+
         val weatherResult =
             cityList.map { city ->
                 async {
@@ -180,7 +188,7 @@ class HomeViewModel @Inject constructor(
                 }
             }.awaitAll()
 
-        val list = weatherResult.mapNotNull { result -> result.getOrNull() }
+        val list = weatherResult.mapNotNull { result -> result.getOrNull()?.toUiModel() }
 
         if (list.isEmpty())
             _homeUIState.value =
@@ -197,7 +205,7 @@ class HomeViewModel @Inject constructor(
      * to perform that action
      * */
 
-    fun performAction(action: UIAction<CountryDomainModel>) {
+    fun performAction(action: UIAction<CountryUiModel>) {
         when (action) {
 
             is UIAction.SearchTextChanged -> updateSearchTextState(action.text)

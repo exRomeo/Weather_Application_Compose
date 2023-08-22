@@ -1,6 +1,6 @@
 package com.trianglz.weatherapp.di.modules.weather
 
-import com.trianglz.weatherapp.data.apiservice.apininja.ApiNinja
+import com.trianglz.weatherapp.data.apiservice.weather.WeatherAPI
 import com.trianglz.weatherapp.data.remotesource.weather.WeatherRemoteSource
 import com.trianglz.weatherapp.data.remotesource.weather.WeatherRemoteSourceImpl
 import com.trianglz.weatherapp.data.repository.weather.WeatherRepositoryImpl
@@ -23,7 +23,7 @@ abstract class WeatherModule {
     companion object {
         @Provides
         @Singleton
-        fun provideApiNinja(): ApiNinja {
+        fun provideWeatherAPI(): WeatherAPI {
             val baseUrl = "https://api.api-ninjas.com/v1/"
 
             val retrofit: Retrofit =
@@ -33,7 +33,7 @@ abstract class WeatherModule {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 
-            return retrofit.create(ApiNinja::class.java)
+            return retrofit.create(WeatherAPI::class.java)
         }
     }
 

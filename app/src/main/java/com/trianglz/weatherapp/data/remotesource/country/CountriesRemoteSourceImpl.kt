@@ -1,16 +1,16 @@
 package com.trianglz.weatherapp.data.remotesource.country
 
-import com.trianglz.weatherapp.data.apiservice.restcountries.RestCountriesAPI
+import com.trianglz.weatherapp.data.apiservice.countries.CountryAPI
 import com.trianglz.weatherapp.data.models.country.CountryDataModel
 import javax.inject.Inject
 
 class CountriesRemoteSourceImpl @Inject constructor(
-    private val restCountriesAPI: RestCountriesAPI
+    private val countryAPI: CountryAPI
 ) : CountriesRemoteSource {
     override suspend fun getCountries(
         countryName: String
     ): List<CountryDataModel> =
-        restCountriesAPI.getCountries(
+        countryAPI.getCountries(
             countryName = countryName
         )
 }

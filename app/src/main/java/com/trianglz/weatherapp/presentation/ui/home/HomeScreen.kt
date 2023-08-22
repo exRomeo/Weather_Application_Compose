@@ -31,9 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
-import com.trianglz.weatherapp.presentation.extensions.getWeatherDescription
-import com.trianglz.weatherapp.presentation.extensions.getWeatherIcon
+import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
 import com.trianglz.weatherapp.presentation.ui.components.LoadingScreen
 import com.trianglz.weatherapp.presentation.ui.components.MessageScreen
 import com.trianglz.weatherapp.presentation.ui.components.WeatherCard
@@ -86,6 +84,7 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
     ) { paddingValues ->
         val text by viewModel.searchTextState.collectAsState()
         val searchState = viewModel.searchBarState
+        val resultState = viewModel.resultState
         val uiState by viewModel.homeUIState.collectAsState()
         Box(
             modifier = Modifier
@@ -96,6 +95,7 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
             WeatherSearchBar(
                 modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
                 searchBarState = searchState,
+                results = resultState,
                 onItemClicked = { country ->
                     viewModel.performAction(
                         UIAction.ItemSelected(
@@ -118,7 +118,7 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
 }
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<WeatherDomainModel>>) {
+fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<WeatherUiModel>>) {
     when (uiState) {
         is UIState.Idle -> MessageScreen(
             modifier = modifier,
@@ -137,7 +137,7 @@ fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<Weath
 @Composable
 fun WeatherDataList(
     modifier: Modifier = Modifier,
-    weatherData: List<WeatherDomainModel>
+    weatherData: List<WeatherUiModel>
 ) {
     LazyColumn(
         modifier = modifier,
@@ -146,12 +146,7 @@ fun WeatherDataList(
     ) {
         items(weatherData, key = { it.hashCode() }) { weather ->
             WeatherCard(
-                currentTemperature = weather.currentTemperature,
-                highTemperature = weather.highTemperature,
-                lowTemperature = weather.lowTemperature,
-                location = "${weather.cityName}, ${weather.countryCode}",
-                description = weather.getWeatherDescription(),
-                icon = weather.getWeatherIcon()
+                weather = weather
             )
         }
     }

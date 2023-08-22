@@ -29,10 +29,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.trianglz.weatherapp.R
 import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
+import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.PurpleIndigoGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.trianglz.weatherapp.presentation.ui.theme.lavender
+
+@Composable
+fun WeatherCard(
+    modifier: Modifier = Modifier,
+    weather: WeatherUiModel = WeatherUiModel()
+) {
+    WeatherCard(
+        modifier = modifier,
+        currentTemperature = weather.currentTemperature,
+        highTemperature = weather.highTemperature,
+        lowTemperature = weather.lowTemperature,
+        location = weather.location,
+        description = weather.description,
+        icon = weather.icon,
+    )
+}
 
 @Composable
 fun WeatherCard(

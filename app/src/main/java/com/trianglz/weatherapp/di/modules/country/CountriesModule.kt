@@ -1,6 +1,6 @@
 package com.trianglz.weatherapp.di.modules.country
 
-import com.trianglz.weatherapp.data.apiservice.restcountries.RestCountriesAPI
+import com.trianglz.weatherapp.data.apiservice.countries.CountryAPI
 import com.trianglz.weatherapp.data.remotesource.country.CountriesRemoteSource
 import com.trianglz.weatherapp.data.remotesource.country.CountriesRemoteSourceImpl
 import com.trianglz.weatherapp.data.repository.country.CountriesRepositoryImpl
@@ -23,7 +23,7 @@ abstract class CountriesModule {
     companion object {
         @Provides
         @Singleton
-        fun provideRestCountries(): RestCountriesAPI {
+        fun provideCountryApi(): CountryAPI {
             val baseUrl = "https://restcountries.com/v3.1/"
 
             val retrofit: Retrofit =
@@ -33,7 +33,7 @@ abstract class CountriesModule {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 
-            return retrofit.create(RestCountriesAPI::class.java)
+            return retrofit.create(CountryAPI::class.java)
         }
     }
 

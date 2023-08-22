@@ -57,11 +57,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
 import com.trianglz.weatherapp.presentation.extensions.maxHeightScreenRatio
-import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarState
-import com.trianglz.weatherapp.presentation.searchbarstate.SearchBarStatus
-import com.trianglz.weatherapp.presentation.searchbarstate.rememberSearchState
+import com.trianglz.weatherapp.presentation.models.resultitem.ResultItem
+import com.trianglz.weatherapp.presentation.models.searchbar.SearchBarState
+import com.trianglz.weatherapp.presentation.models.searchbar.SearchBarStatus
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.trianglz.weatherapp.presentation.ui.theme.darkPurple
@@ -73,13 +72,14 @@ import com.trianglz.weatherapp.presentation.ui.theme.lavender
  * */
 
 @Composable
-fun WeatherSearchBar(
+fun <T : ResultItem> WeatherSearchBar(
     modifier: Modifier = Modifier,
-    searchBarState: SearchBarState = rememberSearchState(),
+    searchBarState: SearchBarState = SearchBarState(),
+    results: List<T> = emptyList(),
     text: String = "",
     onTextChanged: (String) -> Unit = {},
     onCloseClicked: () -> Unit = { },
-    onItemClicked: (CountryDomainModel) -> Unit = {}
+    onItemClicked: (T) -> Unit = {}
 ) {
     WeatherSearchBar(
         modifier = modifier,
@@ -87,7 +87,7 @@ fun WeatherSearchBar(
         placeHolder = searchBarState.placeHolder,
         noResultPlaceHolder = searchBarState.noResultMessage,
         status = searchBarState.status,
-        results = searchBarState.result,
+        results = results,
         onTextChanged = onTextChanged,
         onCloseClicked = onCloseClicked,
         onResultClicked = onItemClicked
@@ -101,15 +101,15 @@ fun WeatherSearchBar(
  * */
 
 @Composable
-fun WeatherSearchBar(
+fun <T : ResultItem> WeatherSearchBar(
     modifier: Modifier = Modifier,
     status: SearchBarStatus = SearchBarStatus.Idle,
     placeHolder: String = "",
     text: String = "",
     onCloseClicked: () -> Unit = {},
     noResultPlaceHolder: String = "",
-    results: List<CountryDomainModel> = listOf(),
-    onResultClicked: (CountryDomainModel) -> Unit = {},
+    results: List<T> = listOf(),
+    onResultClicked: (T) -> Unit = {},
     onTextChanged: (String) -> Unit = {}
 ) {
 
@@ -219,7 +219,8 @@ fun WeatherSearchBar(
                     .maxHeightScreenRatio(0.5f)
                     .animateContentSize()
             ) {
-                SearchResultsBox(countries = results,
+                SearchResultsBox(
+                    items = results,
                     noResultPlaceHolder = noResultPlaceHolder,
                     onResultClicked = {
                         onResultClicked(it)
@@ -275,45 +276,45 @@ fun TransparentSearchBar(
 
 /**
  * [SearchResultsBox] is just a transparent [Column] that shows the received country list or an error message
- * @param countries represents the country list
+ * @param items represents the country list
  * @param noResultPlaceHolder represents the error message
  * @param onResultClicked is a call back to handle what happens when the user clicks on a country
  * */
 @Composable
-fun SearchResultsBox(
+fun <T : ResultItem> SearchResultsBox(
     modifier: Modifier = Modifier,
-    countries: List<CountryDomainModel>,
+    items: List<T>,
     noResultPlaceHolder: String,
-    onResultClicked: (CountryDomainModel) -> Unit = {}
+    onResultClicked: (T) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
     ) {
-        items(countries, key = { it.code }) { country ->
+        items(items, key = { it.hashCode() }) { item ->
             Row(
                 Modifier
                     .height(48.dp)
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.small)
-                    .clickable { onResultClicked(country) },
+                    .clickable { onResultClicked(item) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier
                         .padding(horizontal = 48.dp)
                         .fillMaxWidth(),
-                    text = country.name,
+                    text = item.name,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            if (country != countries.last()) Divider(
+            if (item != items.last()) Divider(
                 modifier = Modifier.padding(horizontal = 24.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
-        if (countries.isEmpty() && noResultPlaceHolder.isNotBlank()) item {
+        if (items.isEmpty() && noResultPlaceHolder.isNotBlank()) item {
             Row(
                 Modifier
                     .height(48.dp)

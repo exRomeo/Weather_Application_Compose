@@ -31,11 +31,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.trianglz.weatherapp.presentation.models.result.ResultUiModel
 import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
 import com.trianglz.weatherapp.presentation.ui.components.LoadingScreen
 import com.trianglz.weatherapp.presentation.ui.components.MessageScreen
 import com.trianglz.weatherapp.presentation.ui.components.WeatherCard
-import com.trianglz.weatherapp.presentation.ui.components.WeatherSearchBar
+import com.trianglz.weatherapp.presentation.ui.components.WeatherSearchWithResults
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
@@ -84,34 +85,40 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
     ) { paddingValues ->
         val text by viewModel.searchTextState.collectAsState()
         val searchState = viewModel.searchBarState
-        val resultState = viewModel.resultState
+        val resultState by viewModel.resultState.collectAsState()
         val uiState by viewModel.homeUIState.collectAsState()
+        val onTextChanged = remember {
+            { newValue: String ->
+                viewModel.performAction(
+                    UIAction.SearchTextChanged(
+                        newValue
+                    )
+                )
+            }
+        }
+        val onItemClicked = remember {
+            { country: ResultUiModel ->
+                viewModel.performAction(
+                    UIAction.ItemSelected(
+                        country,
+                        5
+                    )
+                )
+            }
+        }
         Box(
             modifier = Modifier
                 .padding(paddingValues)
         ) {
             HomeScreenContent(modifier = Modifier.padding(top = 56.dp), uiState = uiState)
 
-            WeatherSearchBar(
+            WeatherSearchWithResults(
                 modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
                 searchBarState = searchState,
-                results = resultState,
-                onItemClicked = { country ->
-                    viewModel.performAction(
-                        UIAction.ItemSelected(
-                            country,
-                            5
-                        )
-                    )
-                },
-                onTextChanged = { newValue ->
-                    viewModel.performAction(
-                        UIAction.SearchTextChanged(
-                            newValue
-                        )
-                    )
-                },
-                text = text
+                results = { resultState },
+                onItemClicked = onItemClicked,
+                onTextChanged = onTextChanged,
+                text = { text }
             )
         }
     }

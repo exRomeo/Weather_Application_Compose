@@ -7,7 +7,7 @@ import javax.inject.Named
 
 
 class CitiesRemoteSourceImpl @Inject constructor(
-    @Named("ApiKey")
+    @Named("ApiNinjaApiKey")
     private val apiKey: String,
     private val cityAPI: CityAPI
 ) : CitiesRemoteSource {

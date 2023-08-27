@@ -45,7 +45,7 @@ fun WeatherCard(
         currentTemperature = weather.currentTemperature,
         highTemperature = weather.highTemperature,
         lowTemperature = weather.lowTemperature,
-        location = weather.location,
+        location = "${weather.cityName}, ${weather.countryCode}",
         description = weather.description,
         icon = weather.icon,
     )

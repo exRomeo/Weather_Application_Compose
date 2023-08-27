@@ -1,15 +1,15 @@
-package com.trianglz.weatherapp.presentation.navigation
+package com.trianglz.weatherapp.presentation.navigation.drawer
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
 
 /**
- * [WeatherAppNavigationActions] was created to encapsulate the navigation logic between the screens
+ * [DrawerNavigationActions] was created to encapsulate the navigation logic between the screens
  * in one place to make it easier to trace navigation issues
  * */
 
-class WeatherAppNavigationActions(navController: NavController) {
+class DrawerNavigationActions(navController: NavController) {
 
     /**
      * [navigateToHome] and [navigateToScreenTwo] navigate to the destination screen and
@@ -18,7 +18,7 @@ class WeatherAppNavigationActions(navController: NavController) {
      * */
 
     val navigateToHome: () -> Unit = {
-        navController.navigate(Destinations.Home.route) {
+        navController.navigate(route = DrawerDestinations.Home.route) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
@@ -29,7 +29,7 @@ class WeatherAppNavigationActions(navController: NavController) {
 
 
     val navigateToScreenTwo: () -> Unit = {
-        navController.navigate(Destinations.ScreenTwo.route) {
+        navController.navigate(route = DrawerDestinations.ScreenTwo.route) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
@@ -37,4 +37,6 @@ class WeatherAppNavigationActions(navController: NavController) {
             restoreState = true
         }
     }
+
+
 }

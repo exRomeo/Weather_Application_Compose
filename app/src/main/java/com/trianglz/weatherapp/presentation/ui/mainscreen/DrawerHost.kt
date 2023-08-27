@@ -11,23 +11,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.trianglz.weatherapp.presentation.navigation.Destinations
-import com.trianglz.weatherapp.presentation.navigation.WeatherAppNavGraph
-import com.trianglz.weatherapp.presentation.navigation.WeatherAppNavigationActions
+import com.trianglz.weatherapp.presentation.navigation.appwide.NavigationActions
+import com.trianglz.weatherapp.presentation.navigation.drawer.DrawerDestinations
+import com.trianglz.weatherapp.presentation.navigation.drawer.DrawerNavGraph
+import com.trianglz.weatherapp.presentation.navigation.drawer.DrawerNavigationActions
 import com.trianglz.weatherapp.presentation.ui.components.WeatherNavDrawerSheet
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun WeatherApp(modifier: Modifier = Modifier) {
-
+fun DrawerHost(
+    modifier: Modifier = Modifier,
+    navigationActions: NavigationActions
+) {
     val navController = rememberNavController()
-    val navigationActions = remember(navController) {
-        WeatherAppNavigationActions(navController)
+    val drawerNavigationActions = remember(navController) {
+        DrawerNavigationActions(navController)
     }
 
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route ?: Destinations.Home.route
+    val currentRoute = backStackEntry?.destination?.route ?: DrawerDestinations.Home.route
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
@@ -36,16 +39,17 @@ fun WeatherApp(modifier: Modifier = Modifier) {
         drawerContent = {
             WeatherNavDrawerSheet(
                 currentRoute = currentRoute,
-                navigateToHome = navigationActions.navigateToHome,
-                navigateToScreenTwo = navigationActions.navigateToScreenTwo,
+                navigateToHome = drawerNavigationActions.navigateToHome,
+                navigateToScreenTwo = drawerNavigationActions.navigateToScreenTwo,
                 closeDrawer = { coroutineScope.launch { drawerState.close() } })
         },
         drawerState = drawerState,
         gesturesEnabled = true
     ) {
-        WeatherAppNavGraph(
+        DrawerNavGraph(
             modifier = modifier,
             navController = navController,
+            navigationActions = navigationActions,
             openDrawer = { coroutineScope.launch { drawerState.open() } }
         )
     }
@@ -56,6 +60,6 @@ fun WeatherApp(modifier: Modifier = Modifier) {
 @Composable
 fun WeatherAppPreview() {
     WeatherAppTheme {
-        WeatherApp()
+        DrawerHost(navigationActions = NavigationActions(rememberNavController()))
     }
 }

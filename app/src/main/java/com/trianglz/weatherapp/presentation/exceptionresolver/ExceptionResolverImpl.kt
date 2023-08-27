@@ -37,6 +37,7 @@ class ExceptionResolverImpl @Inject constructor(private val resourceManager: Res
         401 -> R.string.unauthorized
         403 -> R.string.forbidden
         404 -> R.string.not_found
+        429 -> R.string.too_many_requests
         500 -> R.string.internal_server_error
         else -> R.string.unknown_error
     }

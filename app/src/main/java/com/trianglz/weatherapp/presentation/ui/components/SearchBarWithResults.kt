@@ -94,7 +94,7 @@ fun <T : ResultItem> WeatherSearchWithResults(
 @Composable
 fun WeatherSearchWithResults(
     modifier: Modifier = Modifier,
-    status: ()-> ResultState<Nothing> = { ResultState.Idle() },
+    status: () -> ResultState<Nothing> = { ResultState.Idle() },
     placeHolder: () -> String = { "" },
     text: () -> String = { "" },
     onCloseClicked: () -> Unit = {},

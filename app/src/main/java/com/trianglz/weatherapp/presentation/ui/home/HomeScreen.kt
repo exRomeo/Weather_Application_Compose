@@ -2,6 +2,7 @@ package com.trianglz.weatherapp.presentation.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,8 +12,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -33,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.trianglz.weatherapp.presentation.models.result.ResultUiModel
 import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
+import com.trianglz.weatherapp.presentation.ui.animations.AnimateAppearanceRTL
 import com.trianglz.weatherapp.presentation.ui.components.LoadingScreen
 import com.trianglz.weatherapp.presentation.ui.components.MessageScreen
 import com.trianglz.weatherapp.presentation.ui.components.WeatherCard
@@ -46,7 +50,11 @@ import kotlinx.coroutines.flow.SharedFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    openDrawer: () -> Unit = {},
+    navigateToDetails: (WeatherUiModel) -> Unit = {}
+) {
     val viewModel: HomeViewModel = hiltViewModel()
     val snackbarHostState = remember { SnackbarHostState() }
     EventProcessor(snackbarHostState = snackbarHostState, uiEvents = viewModel.uiEvents)
@@ -60,11 +68,13 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
-                    Icon(
-                        modifier = Modifier.clickable { openDrawer() },
-                        imageVector = Icons.Rounded.Menu,
-                        contentDescription = null,
-                    )
+                    IconButton(onClick = openDrawer) {
+                        Icon(
+                            modifier = Modifier,
+                            imageVector = Icons.Rounded.Menu,
+                            contentDescription = null,
+                        )
+                    }
                 },
                 title = {
                     Text(
@@ -110,7 +120,11 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
             modifier = Modifier
                 .padding(paddingValues)
         ) {
-            HomeScreenContent(modifier = Modifier.padding(top = 56.dp), uiState = uiState)
+            HomeScreenContent(
+                modifier = Modifier.padding(top = 56.dp),
+                uiState = uiState,
+                navigateToDetails = navigateToDetails
+            )
 
             WeatherSearchWithResults(
                 modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 0.dp),
@@ -125,7 +139,11 @@ fun HomeScreen(modifier: Modifier = Modifier, openDrawer: () -> Unit = {}) {
 }
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<WeatherUiModel>>) {
+fun HomeScreenContent(
+    modifier: Modifier = Modifier,
+    uiState: UIState<List<WeatherUiModel>>,
+    navigateToDetails: (WeatherUiModel) -> Unit = {}
+) {
     when (uiState) {
         is UIState.Idle -> MessageScreen(
             modifier = modifier,
@@ -134,7 +152,11 @@ fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<Weath
 
         is UIState.Loading -> LoadingScreen(modifier = modifier)
 
-        is UIState.Success -> WeatherDataList(modifier = modifier, weatherData = uiState.list)
+        is UIState.Success -> WeatherDataList(
+            modifier = modifier,
+            weatherData = uiState.data,
+            navigateToDetails = navigateToDetails
+        )
 
         is UIState.Failure -> MessageScreen(modifier = modifier, message = uiState.message)
     }
@@ -144,17 +166,27 @@ fun HomeScreenContent(modifier: Modifier = Modifier, uiState: UIState<List<Weath
 @Composable
 fun WeatherDataList(
     modifier: Modifier = Modifier,
-    weatherData: List<WeatherUiModel>
+    weatherData: List<WeatherUiModel>,
+    navigateToDetails: (WeatherUiModel) -> Unit = {}
 ) {
+
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = spacedBy(20.dp)
     ) {
+
         items(weatherData, key = { it.hashCode() }) { weather ->
-            WeatherCard(
-                weather = weather
-            )
+            AnimateAppearanceRTL {
+                WeatherCard(
+                    modifier = Modifier.clickable(
+                        onClick = { navigateToDetails(weather) },
+                        indication = rememberRipple(bounded = true),
+                        interactionSource = remember { MutableInteractionSource() }
+                    ),
+                    weather = weather
+                )
+            }
         }
     }
 }
@@ -181,3 +213,7 @@ fun HomeScreenPreview() {
         HomeScreen(modifier = Modifier.background(BackgroundGradient))
     }
 }
+
+
+
+

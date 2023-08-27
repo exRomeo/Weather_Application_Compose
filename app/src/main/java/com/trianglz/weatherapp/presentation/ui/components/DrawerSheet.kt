@@ -22,7 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.trianglz.weatherapp.presentation.navigation.Destinations
+import com.trianglz.weatherapp.presentation.navigation.drawer.DrawerDestinations
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 /**
  * @param currentRoute represents the route of the currently previewed screen
@@ -52,7 +52,7 @@ fun WeatherNavDrawerSheet(
         NavigationDrawerItem(
             label = { Text("Home") },
             icon = { Icon(imageVector = Icons.Rounded.Home, contentDescription = null) },
-            selected = currentRoute == Destinations.Home.route,
+            selected = currentRoute == DrawerDestinations.Home.route,
             onClick = { navigateToHome(); closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
             colors = NavigationDrawerItemDefaults.colors(selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer)
@@ -61,7 +61,7 @@ fun WeatherNavDrawerSheet(
         NavigationDrawerItem(
             label = { Text("Screen Two") },
             icon = { Icon(imageVector = Icons.Rounded.Favorite, contentDescription = null) },
-            selected = currentRoute == Destinations.ScreenTwo.route,
+            selected = currentRoute == DrawerDestinations.ScreenTwo.route,
             onClick = { navigateToScreenTwo(); closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
             colors = NavigationDrawerItemDefaults.colors(selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer)
@@ -74,12 +74,12 @@ fun WeatherNavDrawerSheet(
 fun WeatherNavDrawerSheetPreview() {
     WeatherAppTheme {
         var currentRoute by remember {
-            mutableStateOf(Destinations.Home.route)
+            mutableStateOf(DrawerDestinations.Home.route)
         }
         WeatherNavDrawerSheet(
             currentRoute,
-            { currentRoute = Destinations.Home.route },
-            { currentRoute = Destinations.ScreenTwo.route },
+            { currentRoute = DrawerDestinations.Home.route },
+            { currentRoute = DrawerDestinations.ScreenTwo.route },
             {})
     }
 }

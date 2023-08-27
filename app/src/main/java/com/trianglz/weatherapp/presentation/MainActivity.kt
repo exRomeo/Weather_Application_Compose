@@ -5,10 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
-import com.trianglz.weatherapp.presentation.ui.mainscreen.WeatherApp
+import androidx.navigation.compose.rememberNavController
+import com.trianglz.weatherapp.presentation.navigation.appwide.NavigationActions
+import com.trianglz.weatherapp.presentation.navigation.appwide.WeatherAppNavGraph
 import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +41,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             WeatherAppTheme {
-                WeatherApp(modifier = Modifier.background(BackgroundGradient))
+                val navController = rememberNavController()
+                val navigationActions = remember(navController) {
+                    NavigationActions(navController)
+                }
+                WeatherAppNavGraph(
+                    navigationActions = navigationActions,
+                    navController = navController,
+                    modifier = Modifier.background(BackgroundGradient)
+                )
             }
         }
     }
@@ -48,6 +59,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     WeatherAppTheme {
-        WeatherApp(modifier = Modifier.background(BackgroundGradient))
+        WeatherAppNavGraph(
+            navigationActions = NavigationActions(rememberNavController()),
+            modifier = Modifier.background(BackgroundGradient)
+        )
     }
 }

@@ -16,7 +16,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun ScreenTwo() {
+fun ScreenTwo(modifier: Modifier = Modifier) {
     val viewModel: ScreenTwoViewModel = hiltViewModel()
 
     /**
@@ -30,7 +30,7 @@ fun ScreenTwo() {
         )
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {

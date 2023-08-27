@@ -18,20 +18,29 @@ import javax.inject.Singleton
 abstract class AppModule {
 
     /**
-     * [provideApiKey] gets the "ApiKey" hidden in "local.properties" file
-     * if you are facing problems with the api please get your own api key from the [official site](https://api-ninjas.com/api/city)
+     * [provideApiNinjaApiKey] gets the "ApiKey" hidden in "local.properties" file
+     * if you are facing problems with the api please get your own api key from the official sites
+     * [ApiNinja](https://api-ninjas.com/api/city),
+     * [OpenWeatherMap](https://openweathermap.org/api)
      * and put it in "local.properties' as
      *
-     *     APIKEY=api_key_here
+     *     APININJA_APIKEY=api_key_here
+     *     OPENWEATHERMAP_APIKEY=api_key_here
      *
      * */
 
     companion object {
         @Provides
-        @Named("ApiKey")
+        @Named("ApiNinjaApiKey")
         @Singleton
-        fun provideApiKey(): String {
-            return BuildConfig.APIKEY
+        fun provideApiNinjaApiKey(): String {
+            return BuildConfig.APININJA_APIKEY
+        }
+        @Provides
+        @Named("OpenWeatherMapApiKey")
+        @Singleton
+        fun provideOpenWeatherMapApiKey(): String {
+            return BuildConfig.OPENWEATHERMAP_APIKEY
         }
 
         @Provides

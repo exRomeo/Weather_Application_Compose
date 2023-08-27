@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class WeatherRemoteSourceImpl @Inject constructor(
-    @Named("ApiKey")
+    @Named("ApiNinjaApiKey")
     private val apiKey: String,
     private val weatherApi: WeatherAPI
 ) : WeatherRemoteSource {

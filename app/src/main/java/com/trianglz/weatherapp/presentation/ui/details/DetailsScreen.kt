@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
 import com.trianglz.weatherapp.presentation.models.weatherdetails.WeatherDetailsUiModel
 import com.trianglz.weatherapp.presentation.navigation.appwide.NavigationActions
+import com.trianglz.weatherapp.presentation.ui.animations.AnimateAppearanceLTR
 import com.trianglz.weatherapp.presentation.ui.components.CurrentWeatherCard
 import com.trianglz.weatherapp.presentation.ui.components.DailyForecastCard
 import com.trianglz.weatherapp.presentation.ui.components.ExtraDetailsCard
@@ -98,7 +99,11 @@ fun DetailsScreen(
                 is UIState.Loading -> LoadingScreen()
                 is UIState.Idle -> {}
             }
-            PullRefreshIndicator(viewModel.refreshing, refreshState, Modifier.align(Alignment.TopCenter))
+            PullRefreshIndicator(
+                viewModel.refreshing,
+                refreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -112,19 +117,27 @@ fun DetailsContent(modifier: Modifier = Modifier, weatherDetails: WeatherDetails
     ) {
 
         item {
-            CurrentWeatherCard(currentWeather = weatherDetails.currentWeatherDetails)
+            AnimateAppearanceLTR {
+                CurrentWeatherCard(currentWeather = weatherDetails.currentWeatherDetails)
+            }
         }
 
         item {
-            HourlyForecastCard(hourlyList = weatherDetails.hourlyList)
+            AnimateAppearanceLTR {
+                HourlyForecastCard(hourlyList = weatherDetails.hourlyList)
+            }
         }
 
         item {
-            ExtraDetailsCard(list = weatherDetails.extraDetailsList)
+            AnimateAppearanceLTR {
+                ExtraDetailsCard(list = weatherDetails.extraDetailsList)
+            }
         }
 
         item {
-            DailyForecastCard(dailyList = weatherDetails.dailyList)
+            AnimateAppearanceLTR {
+                DailyForecastCard(dailyList = weatherDetails.dailyList)
+            }
         }
 
     }

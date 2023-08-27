@@ -23,3 +23,18 @@ fun AnimateAppearanceRTL(
         enter = enter
     ) { content() }
 }
+@Composable
+fun AnimateAppearanceLTR(
+    enter: EnterTransition = slideInHorizontally() + fadeIn(initialAlpha = 0.3f),
+    content: @Composable () -> Unit
+) {
+    val state = remember {
+        MutableTransitionState(false).apply {
+            targetState = true
+        }
+    }
+    AnimatedVisibility(
+        visibleState = state,
+        enter = enter
+    ) { content() }
+}

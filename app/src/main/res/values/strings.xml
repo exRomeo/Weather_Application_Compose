@@ -2,10 +2,11 @@
     <string name="app_name">WeatherApp</string>
     <string name="request_timed_out">Request timed out. Please check your internet connection and try again.</string>
     <string name="connection_error">Connection Error, Please check your internet connection.</string>
-    <string name="unknown_error">n error occurred. Please try again later.</string>
+    <string name="unknown_error">an error occurred. Please try again later.</string>
     <string name="bad_request">Bad request. Please check your input and try again. if the problem persists check your Api Key.</string>
     <string name="unauthorized">Unauthorized. Please check your Api Key</string>
     <string name="forbidden">Forbidden. You don\'t have permission to access this resource.</string>
     <string name="not_found">Found no results!</string>
+    <string name="too_many_requests">Too many requests. Please try again later.</string>
     <string name="internal_server_error">Internal server error. Please try again later.</string>
 </resources>

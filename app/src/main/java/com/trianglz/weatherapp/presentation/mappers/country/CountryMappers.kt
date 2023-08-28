@@ -1,17 +1,17 @@
 package com.trianglz.weatherapp.presentation.mappers.country
 
 import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
-import com.trianglz.weatherapp.presentation.models.country.CountryUiModel
+import com.trianglz.weatherapp.presentation.models.result.ResultUiModel
 
-fun CountryUiModel.toDomainModel(): CountryDomainModel =
+fun ResultUiModel.toDomainModel(): CountryDomainModel =
     CountryDomainModel(
         name = name,
         code = code,
         flag = flag
     )
 
-fun CountryDomainModel.toUiModel(): CountryUiModel =
-    CountryUiModel(
+fun CountryDomainModel.toUiModel(): ResultUiModel =
+    ResultUiModel(
         name = name,
         code = code,
         flag = flag

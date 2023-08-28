@@ -12,9 +12,9 @@ import com.trianglz.weatherapp.domain.usecases.fetchweather.FetchWeatherUseCase
 import com.trianglz.weatherapp.presentation.exceptionresolver.ExceptionResolver
 import com.trianglz.weatherapp.presentation.mappers.country.toUiModel
 import com.trianglz.weatherapp.presentation.mappers.weather.toUiModel
-import com.trianglz.weatherapp.presentation.models.country.CountryUiModel
+import com.trianglz.weatherapp.presentation.models.result.ResultState
+import com.trianglz.weatherapp.presentation.models.result.ResultUiModel
 import com.trianglz.weatherapp.presentation.models.searchbar.SearchBarState
-import com.trianglz.weatherapp.presentation.models.searchbar.SearchBarStatus
 import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
 import com.trianglz.weatherapp.presentation.viewcontract.UIAction
 import com.trianglz.weatherapp.presentation.viewcontract.UIEvent
@@ -66,8 +66,12 @@ class HomeViewModel @Inject constructor(
     var searchBarState by mutableStateOf(SearchBarState(placeHolder = "Search For a Country..."))
         private set
 
-    var resultState by mutableStateOf(emptyList<CountryUiModel>())
-        private set
+
+    private var _resultState: MutableStateFlow<ResultState<ResultUiModel>> =
+        MutableStateFlow(ResultState.Idle())
+    val resultState: StateFlow<ResultState<ResultUiModel>>
+        get() = _resultState
+
 
     /**
      * [uiEvents] is responsible for emitting ui events such as error messages
@@ -87,10 +91,9 @@ class HomeViewModel @Inject constructor(
         _searchTextState.value = newValue
         if (newValue.isBlank()) {
             searchBarState = searchBarState.copy(
-                status = SearchBarStatus.Idle,
-                noResultMessage = ""
+                status = ResultState.Idle()
             )
-            resultState = emptyList()
+            _resultState.value = ResultState.Idle()
         }
     }
 
@@ -121,23 +124,22 @@ class HomeViewModel @Inject constructor(
     private suspend fun getCountries(countryName: String) {
         searchBarState =
             searchBarState.copy(
-                status = SearchBarStatus.Loading
+                status = ResultState.Loading()
             )
         val countries = fetchCountries.getCountries(countryName = countryName)
 
         countries
             .onSuccess { resultList ->
                 searchBarState = searchBarState.copy(
-                    status = SearchBarStatus.Idle
+                    status = ResultState.Idle()
                 )
-                resultState = resultList.map { it.toUiModel() }
+                _resultState.value = ResultState.Success(resultList.map { it.toUiModel() })
 
             }.onFailure {
                 searchBarState = searchBarState.copy(
-                    status = SearchBarStatus.Error,
-                    noResultMessage = exceptionResolver.resolve(it)
+                    status = ResultState.NoResult("No Results Found!")
                 )
-                resultState = emptyList()
+                _resultState.value = ResultState.NoResult(exceptionResolver.resolve(it))
 
             }
     }
@@ -151,7 +153,7 @@ class HomeViewModel @Inject constructor(
      * in case of failure it sets the ui state to failure with a message explaining the issue to the user
      * */
 
-    private fun getWeatherData(country: CountryUiModel, limit: Int) {
+    private fun getWeatherData(country: ResultUiModel, limit: Int) {
         viewModelScope.launch {
             _homeUIState.value = UIState.Loading()
             searchBarState = searchBarState.copy(placeHolder = country.name)
@@ -205,7 +207,7 @@ class HomeViewModel @Inject constructor(
      * to perform that action
      * */
 
-    fun performAction(action: UIAction<CountryUiModel>) {
+    fun performAction(action: UIAction<ResultUiModel>) {
         when (action) {
 
             is UIAction.SearchTextChanged -> updateSearchTextState(action.text)

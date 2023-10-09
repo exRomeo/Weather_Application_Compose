@@ -1,6 +1,6 @@
 package com.trianglz.weatherapp.presentation.ui.components
 
-import androidx.compose.foundation.background
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,9 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import com.trianglz.weatherapp.presentation.ui.theme.BackgroundGradient
 import com.trianglz.weatherapp.presentation.ui.theme.lavender
 
 /**
@@ -20,27 +19,18 @@ import com.trianglz.weatherapp.presentation.ui.theme.lavender
  * */
 
 @Composable
-fun MessageScreen(modifier: Modifier = Modifier, message: String) {
+fun MessageScreen(modifier: Modifier = Modifier, @StringRes message: Int) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(0.9f),
-            text = message,
+            text = stringResource(id = message),
             style = MaterialTheme.typography.headlineSmall.copy(
                 color = lavender,
                 textAlign = TextAlign.Center
             )
         )
     }
-}
-
-@Preview
-@Composable
-fun MessageScreenPreview() {
-    MessageScreen(
-        modifier = Modifier.background(BackgroundGradient),
-        "Something Went Wrong, Please Try Again Later and if the problem persists please contact the developers"
-    )
 }

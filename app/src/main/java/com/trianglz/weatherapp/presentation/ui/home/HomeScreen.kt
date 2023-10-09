@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.trianglz.weatherapp.R
 import com.trianglz.weatherapp.presentation.models.result.ResultUiModel
 import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
 import com.trianglz.weatherapp.presentation.ui.animations.AnimateAppearanceRTL
@@ -147,7 +148,7 @@ fun HomeScreenContent(
     when (uiState) {
         is UIState.Idle -> MessageScreen(
             modifier = modifier,
-            message = "Start searching for a country to display weather details of its top 5 cities"
+            message = R.string.search_message
         )
 
         is UIState.Loading -> LoadingScreen(modifier = modifier)

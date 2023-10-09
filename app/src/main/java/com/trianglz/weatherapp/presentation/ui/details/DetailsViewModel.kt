@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trianglz.weatherapp.domain.usecases.fetchweatherdetails.FetchWeatherDetailsUseCase
-import com.trianglz.weatherapp.presentation.exceptionresolver.ExceptionResolver
+import com.trianglz.weatherapp.presentation.mappers.errors.toUi
 import com.trianglz.weatherapp.presentation.mappers.weather.toDomainModel
 import com.trianglz.weatherapp.presentation.mappers.weatherdetails.toUiModel
 import com.trianglz.weatherapp.presentation.models.weathercard.WeatherUiModel
@@ -22,7 +22,6 @@ import javax.inject.Inject
 class DetailsViewModel
 @Inject constructor(
     private val weatherDetailsUseCase: FetchWeatherDetailsUseCase,
-    private val exceptionResolver: ExceptionResolver
 ) : ViewModel() {
 
     private var _uiState: MutableStateFlow<UIState<WeatherDetailsUiModel>> =
@@ -43,10 +42,10 @@ class DetailsViewModel
                 lang = "en",
                 unit = "metric",
                 exclude = "minutely"
-            ).onSuccess {
+            ).onRight {
                 _uiState.value = UIState.Success(it.toUiModel())
-            }.onFailure {
-                _uiState.value = UIState.Failure(exceptionResolver.resolve(it))
+            }.onLeft {
+                _uiState.value = UIState.Failure(it.toUi())
             }
             refreshing = false
         }

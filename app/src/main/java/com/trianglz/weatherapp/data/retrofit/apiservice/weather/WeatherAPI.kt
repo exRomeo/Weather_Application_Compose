@@ -1,4 +1,4 @@
-package com.trianglz.weatherapp.data.apiservice.weather
+package com.trianglz.weatherapp.data.retrofit.apiservice.weather
 
 import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
 import retrofit2.http.GET

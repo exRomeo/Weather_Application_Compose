@@ -1,6 +1,8 @@
 package com.trianglz.weatherapp.domain.usecases.countrysearch
 
+import arrow.core.Either
 import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
+import com.trianglz.weatherapp.domain.models.errors.WeatherAppErrorDomainModel
 
 interface FetchCountriesUseCase {
 
@@ -11,5 +13,5 @@ interface FetchCountriesUseCase {
 
     suspend fun getCountries(
         countryName: String
-    ): Result<List<CountryDomainModel>>
+    ): Either<WeatherAppErrorDomainModel, List<CountryDomainModel>>
 }

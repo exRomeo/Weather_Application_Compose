@@ -1,6 +1,8 @@
 package com.trianglz.weatherapp.domain.usecases.countrysearch
 
+import arrow.core.Either
 import com.trianglz.weatherapp.domain.models.country.CountryDomainModel
+import com.trianglz.weatherapp.domain.models.errors.WeatherAppErrorDomainModel
 import com.trianglz.weatherapp.domain.repository.country.CountriesRepository
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
@@ -11,11 +13,10 @@ class FetchCountriesUseCaseImpl @Inject constructor(
 ) : FetchCountriesUseCase {
     override suspend fun getCountries(
         countryName: String
-    ): Result<List<CountryDomainModel>> = coroutineScope {
-        runCatching {
-            repository.getCountries(
-                countryName = countryName
-            )
-        }
+    ): Either<WeatherAppErrorDomainModel, List<CountryDomainModel>> = coroutineScope {
+        repository.getCountries(
+            countryName = countryName
+        )
+
     }
 }

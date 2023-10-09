@@ -1,9 +1,9 @@
 package com.trianglz.weatherapp.di.modules.weather
 
-import com.trianglz.weatherapp.data.apiservice.weather.WeatherAPI
 import com.trianglz.weatherapp.data.remotesource.weather.WeatherRemoteSource
 import com.trianglz.weatherapp.data.remotesource.weather.WeatherRemoteSourceImpl
 import com.trianglz.weatherapp.data.repository.weather.WeatherRepositoryImpl
+import com.trianglz.weatherapp.data.retrofit.apiservice.weather.WeatherAPI
 import com.trianglz.weatherapp.domain.repository.weather.WeatherRepository
 import com.trianglz.weatherapp.domain.usecases.fetchweather.FetchWeatherUseCase
 import com.trianglz.weatherapp.domain.usecases.fetchweather.FetchWeatherUseCaseImpl

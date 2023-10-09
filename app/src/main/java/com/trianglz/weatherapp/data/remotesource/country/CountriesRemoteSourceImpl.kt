@@ -1,7 +1,10 @@
 package com.trianglz.weatherapp.data.remotesource.country
 
-import com.trianglz.weatherapp.data.apiservice.countries.CountryAPI
+import arrow.core.Either
+import com.trianglz.weatherapp.data.mappers.errors.resolve
 import com.trianglz.weatherapp.data.models.country.CountryDataModel
+import com.trianglz.weatherapp.data.models.errors.WeatherAppErrorDataModel
+import com.trianglz.weatherapp.data.retrofit.apiservice.countries.CountryAPI
 import javax.inject.Inject
 
 class CountriesRemoteSourceImpl @Inject constructor(
@@ -9,8 +12,9 @@ class CountriesRemoteSourceImpl @Inject constructor(
 ) : CountriesRemoteSource {
     override suspend fun getCountries(
         countryName: String
-    ): List<CountryDataModel> =
+    ): Either<WeatherAppErrorDataModel, List<CountryDataModel>> = Either.catch {
         countryAPI.getCountries(
             countryName = countryName
         )
+    }.mapLeft { resolve(it) }
 }

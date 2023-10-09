@@ -1,5 +1,7 @@
 package com.trianglz.weatherapp.data.remotesource.weatherdetails
 
+import arrow.core.Either
+import com.trianglz.weatherapp.data.models.errors.WeatherAppErrorDataModel
 import com.trianglz.weatherapp.data.models.weatherdetails.WeatherDetailsDataModel
 
 interface WeatherDetailsRemoteSource {
@@ -13,5 +15,5 @@ interface WeatherDetailsRemoteSource {
         lang: String,
         unit: String,
         exclude: String
-    ): WeatherDetailsDataModel
+    ): Either<WeatherAppErrorDataModel, WeatherDetailsDataModel>
 }

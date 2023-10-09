@@ -1,6 +1,8 @@
 package com.trianglz.weatherapp.data.remotesource.city
 
+import arrow.core.Either
 import com.trianglz.weatherapp.data.models.city.CityDataModel
+import com.trianglz.weatherapp.data.models.errors.WeatherAppErrorDataModel
 
 interface CitiesRemoteSource {
 
@@ -14,5 +16,5 @@ interface CitiesRemoteSource {
     suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): List<CityDataModel>
+    ): Either<WeatherAppErrorDataModel, List<CityDataModel>>
 }

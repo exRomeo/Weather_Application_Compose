@@ -9,4 +9,7 @@
     <string name="not_found">Found no results!</string>
     <string name="too_many_requests">Too many requests. Please try again later.</string>
     <string name="internal_server_error">Internal server error. Please try again later.</string>
+    <string name="found_no_cities">Found no cities for this country in the database!</string>
+    <string name="found_no_weaher_data">Found no weather data for this Country in the database!</string>
+    <string name="search_message">Start searching for a country to display weather details of its top 5 cities</string>
 </resources>

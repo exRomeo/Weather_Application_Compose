@@ -1,5 +1,7 @@
 package com.trianglz.weatherapp.domain.usecases.fetchweatherdetails
 
+import arrow.core.Either
+import com.trianglz.weatherapp.domain.models.errors.WeatherAppErrorDomainModel
 import com.trianglz.weatherapp.domain.models.weather.WeatherDomainModel
 import com.trianglz.weatherapp.domain.models.weatherdetails.WeatherDetailsDomainModel
 import com.trianglz.weatherapp.domain.repository.weatherdetails.WeatherDetailsRepository
@@ -14,13 +16,12 @@ class FetchWeatherDetailsUseCaseImpl @Inject constructor(
         lang: String,
         unit: String,
         exclude: String
-    ): Result<WeatherDetailsDomainModel> =
-        runCatching {
-            weatherDetailsRepository.oneCall(
-                weatherDomainModel,
-                lang,
-                unit,
-                exclude
-            )
-        }
+    ): Either<WeatherAppErrorDomainModel, WeatherDetailsDomainModel> =
+        weatherDetailsRepository.oneCall(
+            weatherDomainModel,
+            lang,
+            unit,
+            exclude
+        )
+
 }

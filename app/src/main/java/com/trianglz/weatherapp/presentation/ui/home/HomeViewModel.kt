@@ -5,12 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.trianglz.weatherapp.R
 import com.trianglz.weatherapp.data.models.city.CityDataModel
 import com.trianglz.weatherapp.domain.usecases.countrysearch.FetchCountriesUseCase
 import com.trianglz.weatherapp.domain.usecases.fetchcities.FetchCitiesUseCase
 import com.trianglz.weatherapp.domain.usecases.fetchweather.FetchWeatherUseCase
-import com.trianglz.weatherapp.presentation.exceptionresolver.ExceptionResolver
 import com.trianglz.weatherapp.presentation.mappers.country.toUiModel
+import com.trianglz.weatherapp.presentation.mappers.errors.toUi
 import com.trianglz.weatherapp.presentation.mappers.weather.toUiModel
 import com.trianglz.weatherapp.presentation.models.result.ResultState
 import com.trianglz.weatherapp.presentation.models.result.ResultUiModel
@@ -37,7 +38,6 @@ class HomeViewModel @Inject constructor(
     private val fetchCountries: FetchCountriesUseCase,
     private val fetchCities: FetchCitiesUseCase,
     private val fetchWeather: FetchWeatherUseCase,
-    private val exceptionResolver: ExceptionResolver
 ) : ViewModel() {
 
     /**
@@ -129,17 +129,17 @@ class HomeViewModel @Inject constructor(
         val countries = fetchCountries.getCountries(countryName = countryName)
 
         countries
-            .onSuccess { resultList ->
+            .onRight { resultList ->
                 searchBarState = searchBarState.copy(
                     status = ResultState.Idle()
                 )
                 _resultState.value = ResultState.Success(resultList.map { it.toUiModel() })
 
-            }.onFailure {
+            }.onLeft {
                 searchBarState = searchBarState.copy(
-                    status = ResultState.NoResult("No Results Found!")
+                    status = ResultState.NoResult(it.toUi())
                 )
-                _resultState.value = ResultState.NoResult(exceptionResolver.resolve(it))
+                _resultState.value = ResultState.NoResult(it.toUi())
 
             }
     }
@@ -158,14 +158,14 @@ class HomeViewModel @Inject constructor(
             _homeUIState.value = UIState.Loading()
             searchBarState = searchBarState.copy(placeHolder = country.name)
             val cityList = fetchCities.getCities(country.code, limit)
-            cityList.onSuccess { cities ->
+            cityList.onRight { cities ->
                 if (cities.isEmpty())
                     _homeUIState.value =
-                        UIState.Failure("Found no Cities for this country in the database!")
+                        UIState.Failure(R.string.found_no_cities)
                 else
                     getWeather(cities)
-            }.onFailure {
-                _homeUIState.value = UIState.Failure(exceptionResolver.resolve(it))
+            }.onLeft {
+                _homeUIState.value = UIState.Failure(it.toUi())
             }
         }
     }
@@ -194,7 +194,7 @@ class HomeViewModel @Inject constructor(
 
         if (list.isEmpty())
             _homeUIState.value =
-                UIState.Failure("Found no weather data for this Country in the database!")
+                UIState.Failure(R.string.found_no_weaher_data)
         else
             _homeUIState.value = UIState.Success(list)
 

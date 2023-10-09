@@ -1,5 +1,7 @@
 package com.trianglz.weatherapp.data.remotesource.weather
 
+import arrow.core.Either
+import com.trianglz.weatherapp.data.models.errors.WeatherAppErrorDataModel
 import com.trianglz.weatherapp.data.models.weather.WeatherDataModel
 
 interface WeatherRemoteSource {
@@ -11,5 +13,5 @@ interface WeatherRemoteSource {
     suspend fun getWeather(
         latitude: Double,
         longitude: Double
-    ): WeatherDataModel
+    ): Either<WeatherAppErrorDataModel, WeatherDataModel>
 }

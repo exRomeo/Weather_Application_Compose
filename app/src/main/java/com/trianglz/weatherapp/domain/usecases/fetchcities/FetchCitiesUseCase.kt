@@ -1,6 +1,8 @@
 package com.trianglz.weatherapp.domain.usecases.fetchcities
 
+import arrow.core.Either
 import com.trianglz.weatherapp.data.models.city.CityDataModel
+import com.trianglz.weatherapp.domain.models.errors.WeatherAppErrorDomainModel
 
 interface FetchCitiesUseCase {
 
@@ -12,5 +14,5 @@ interface FetchCitiesUseCase {
     suspend fun getCities(
         countryCode: String,
         limit: Int
-    ): Result<List<CityDataModel>>
+    ): Either<WeatherAppErrorDomainModel, List<CityDataModel>>
 }
